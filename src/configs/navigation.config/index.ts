@@ -1,7 +1,7 @@
 import {
     NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
-    NAV_ITEM_TYPE_COLLAPSE
+    NAV_ITEM_TYPE_COLLAPSE,
 } from '@/constants/navigation.constant'
 import type { NavigationTree } from '@/@types/navigation'
 
@@ -18,15 +18,25 @@ const navigationConfig: NavigationTree[] = [
     },
     /** Example purpose only, please remove */
     {
-        key: 'singleMenuItem',
-        path: '/single-menu-view',
-        title: 'Single menu item',
-        translateKey: 'nav.singleMenuItem',
-        icon: 'singleMenu',
+        key: 'transactions',
+        path: '/transactions-view',
+        title: 'Transacciones',
+        translateKey: 'nav.transactions',
+        icon: 'transactions',
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
         subMenu: [],
     },
+    // {
+    //     key: 'singleMenuItem',
+    //     path: '/single-menu-view',
+    //     title: 'Single menu item',
+    //     translateKey: 'nav.singleMenuItem',
+    //     icon: 'singleMenu',
+    //     type: NAV_ITEM_TYPE_ITEM,
+    //     authority: [],
+    //     subMenu: [],
+    // },
     {
         key: 'collapseMenu',
         path: '',

@@ -33,7 +33,7 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
 
     const onSendMail = async (
         values: ForgotPasswordFormSchema,
-        setSubmitting: (isSubmitting: boolean) => void
+        setSubmitting: (isSubmitting: boolean) => void,
     ) => {
         setSubmitting(true)
         try {
@@ -45,7 +45,7 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
         } catch (errors) {
             setMessage(
                 (errors as AxiosError<{ message: string }>)?.response?.data
-                    ?.message || (errors as Error).toString()
+                    ?.message || (errors as Error).toString(),
             )
             setSubmitting(false)
         }
@@ -56,18 +56,21 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
             <div className="mb-6">
                 {emailSent ? (
                     <>
-                        <h3 className="mb-1">Check your email</h3>
+                        <h3 className="mb-1">
+                            Verifica tu casilla de correo electrónico
+                        </h3>
                         <p>
-                            We have sent a password recovery instruction to your
-                            email
+                            Te hemos enviado las instrucciones para recuperar tu
+                            contraseña a tu correo electrónico.
                         </p>
                     </>
                 ) : (
                     <>
-                        <h3 className="mb-1">Forgot Password</h3>
+                        <h3 className="mb-1">Olvidé mi contraseña</h3>
                         <p>
-                            Please enter your email address to receive a
-                            verification code
+                            Por favor ingresa tu dirección de correo electrónico
+                            <br />
+                            para recibir el código de verificación.
                         </p>
                     </>
                 )}
@@ -113,11 +116,15 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
                                 variant="solid"
                                 type="submit"
                             >
-                                {emailSent ? 'Resend Email' : 'Send Email'}
+                                {emailSent
+                                    ? 'Reenviar correo'
+                                    : 'Enviar correo'}
                             </Button>
                             <div className="mt-4 text-center">
-                                <span>Back to </span>
-                                <ActionLink to={signInUrl}>Sign in</ActionLink>
+                                <span>Volver a </span>
+                                <ActionLink to={signInUrl}>
+                                    Iniciar sesión
+                                </ActionLink>
                             </div>
                         </FormContainer>
                     </Form>

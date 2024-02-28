@@ -23,10 +23,10 @@ type ResetPasswordFormSchema = {
 }
 
 const validationSchema = Yup.object().shape({
-    password: Yup.string().required('Please enter your password'),
+    password: Yup.string().required('Por favor, ingrese su contraseña'),
     confirmPassword: Yup.string().oneOf(
-        [Yup.ref('password')],
-        'Your passwords do not match'
+        [Yup.ref('contraseña')],
+        'Sus contraseñas no coinciden',
     ),
 })
 
@@ -41,7 +41,7 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
 
     const onSubmit = async (
         values: ResetPasswordFormSchema,
-        setSubmitting: (isSubmitting: boolean) => void
+        setSubmitting: (isSubmitting: boolean) => void,
     ) => {
         const { password } = values
         setSubmitting(true)
@@ -54,7 +54,7 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
         } catch (errors) {
             setMessage(
                 (errors as AxiosError<{ message: string }>)?.response?.data
-                    ?.message || (errors as Error).toString()
+                    ?.message || (errors as Error).toString(),
             )
             setSubmitting(false)
         }
@@ -69,14 +69,15 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
             <div className="mb-6">
                 {resetComplete ? (
                     <>
-                        <h3 className="mb-1">Reset done</h3>
-                        <p>Your password has been successfully reset</p>
+                        <h3 className="mb-1">Reseteo terminado</h3>
+                        <p>Su contraseña ha sido reseteada exitosamente</p>
                     </>
                 ) : (
                     <>
-                        <h3 className="mb-1">Set new password</h3>
+                        <h3 className="mb-1">Establecer la nueva contraseña</h3>
                         <p>
-                            Your new password must different to previos password
+                            Su nueva contraseña debe diferir de la contraseña
+                            anterior
                         </p>
                     </>
                 )}
@@ -106,7 +107,7 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                             {!resetComplete ? (
                                 <>
                                     <FormItem
-                                        label="Password"
+                                        label="Contraseña"
                                         invalid={
                                             errors.password && touched.password
                                         }
@@ -115,12 +116,12 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                         <Field
                                             autoComplete="off"
                                             name="password"
-                                            placeholder="Password"
+                                            placeholder="Contraseña"
                                             component={PasswordInput}
                                         />
                                     </FormItem>
                                     <FormItem
-                                        label="Confirm Password"
+                                        label="Confirmar contraseña"
                                         invalid={
                                             errors.confirmPassword &&
                                             touched.confirmPassword
@@ -130,7 +131,7 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                         <Field
                                             autoComplete="off"
                                             name="confirmPassword"
-                                            placeholder="Confirm Password"
+                                            placeholder="Confirmar contraseña"
                                             component={PasswordInput}
                                         />
                                     </FormItem>
@@ -141,8 +142,8 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                         type="submit"
                                     >
                                         {isSubmitting
-                                            ? 'Submiting...'
-                                            : 'Submit'}
+                                            ? 'Enviando...'
+                                            : 'Enviar'}
                                     </Button>
                                 </>
                             ) : (
@@ -152,13 +153,15 @@ const ResetPasswordForm = (props: ResetPasswordFormProps) => {
                                     type="button"
                                     onClick={onContinue}
                                 >
-                                    Continue
+                                    Continuar
                                 </Button>
                             )}
 
                             <div className="mt-4 text-center">
-                                <span>Back to </span>
-                                <ActionLink to={signInUrl}>Sign in</ActionLink>
+                                <span>Volver a </span>
+                                <ActionLink to={signInUrl}>
+                                    Iniciar sesión
+                                </ActionLink>
                             </div>
                         </FormContainer>
                     </Form>
