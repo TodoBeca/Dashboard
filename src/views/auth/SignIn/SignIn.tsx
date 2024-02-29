@@ -4,7 +4,9 @@ const SignIn = () => {
     return (
         <>
             <div className="mb-8">
-                <h3 className="mb-1 text-center">¡Bienvenido de vuelta!</h3>
+                <h3 className="mb-1 text-center" style={{ color: '#152e4d' }}>
+                    ¡Bienvenido de vuelta!
+                </h3>
                 <p className="text-center">
                     ¡Por favor, ingresa tus datos para ingresar!
                 </p>

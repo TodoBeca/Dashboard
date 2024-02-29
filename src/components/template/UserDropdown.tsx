@@ -16,15 +16,26 @@ type DropdownList = {
 const dropdownItemList: DropdownList[] = []
 
 const _UserDropdown = ({ className }: CommonProps) => {
-
     const { signOut } = useAuth()
+
+    const storedAuthInfo = localStorage.getItem('user')
+
+    const authInfo = storedAuthInfo ? JSON.parse(storedAuthInfo) : null
+
+    console.log(authInfo)
+
+    const user = authInfo
+
+    console.log(user)
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
             <Avatar size={32} shape="circle" icon={<HiOutlineUser />} />
             <div className="hidden md:block">
-                <div className="text-xs capitalize">admin</div>
-                <div className="font-bold">User01</div>
+                <div className="text-xs capitalize">
+                    {user?.authority?.join(', ')}
+                </div>
+                <div className="font-bold">{user?.email}</div>
             </div>
         </div>
     )
@@ -41,9 +52,9 @@ const _UserDropdown = ({ className }: CommonProps) => {
                         <Avatar shape="circle" icon={<HiOutlineUser />} />
                         <div>
                             <div className="font-bold text-gray-900 dark:text-gray-100">
-                                User01
+                                {user?.name}
                             </div>
-                            <div className="text-xs">user01@mail.com</div>
+                            <div className="text-xs">{user?.profile.role}</div>
                         </div>
                     </div>
                 </Dropdown.Item>
@@ -54,8 +65,8 @@ const _UserDropdown = ({ className }: CommonProps) => {
                         eventKey={item.label}
                         className="mb-1 px-0"
                     >
-                        <Link 
-                            className="flex h-full w-full px-2" 
+                        <Link
+                            className="flex h-full w-full px-2"
                             to={item.path}
                         >
                             <span className="flex gap-2 items-center w-full">
@@ -76,7 +87,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
                     <span className="text-xl opacity-50">
                         <HiOutlineLogout />
                     </span>
-                    <span>Sign Out</span>
+                    <span>Cerrar Sesión</span>
                 </Dropdown.Item>
             </Dropdown>
         </div>

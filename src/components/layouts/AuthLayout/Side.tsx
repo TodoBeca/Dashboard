@@ -14,7 +14,7 @@ const Side = ({ children, content, ...rest }: SideProps) => {
             <div
                 className="bg-no-repeat bg-cover py-6 px-16 flex-col justify-between hidden lg:flex"
                 style={{
-                    backgroundImage: `url('/img/others/auth-side-bg.jpg')`,
+                    backgroundImage: `url('/img/others/auth-cover-bg.jpeg')`,
                 }}
             >
                 <Logo mode="dark" />
@@ -25,14 +25,16 @@ const Side = ({ children, content, ...rest }: SideProps) => {
                             shape="circle"
                             src="/img/avatars/alex-torriglia.jpg"
                         />
-                        <div className="text-white">
+                        <div className="text-dark">
                             <div className="font-semibold text-base">
                                 Alex Torriglia
                             </div>
-                            <span className="opacity-80">Co-Founder & CEO</span>
+                            <span className="opacity-100">
+                                Co-Founder & CEO
+                            </span>
                         </div>
                     </div>
-                    <p className="text-lg text-white opacity-80">
+                    <p className="text-lg text-dark opacity-100">
                         Xcoop es un joint venture internacional conformado por
                         compañías de servicios fintech, instituciones
                         financieras, proveedores de tecnología, unidos con el
@@ -43,7 +45,7 @@ const Side = ({ children, content, ...rest }: SideProps) => {
                         latina.
                     </p>
                 </div>
-                <span className="text-white">
+                <span className="text-dark">
                     Copyright &copy; {`${new Date().getFullYear()}`}{' '}
                     <span className="font-semibold">{`${APP_NAME}`}</span>{' '}
                 </span>
