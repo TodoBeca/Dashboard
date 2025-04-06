@@ -15,7 +15,7 @@ import {
     LOCAL_STORAGE_USER_KEY,
     LOCAL_STORAGE_TOKEN_KEY,
 } from '../../services/LocalStorageService'
-import { fetchLoginUser } from '../../api/api'
+import { userLogin } from '@/api/api'
 
 type Status = 'success' | 'failed'
 
@@ -114,18 +114,25 @@ function useAuth() {
 
     const login = async (email: string, password: string): Promise<string> => {
         try {
-            const data = await fetchLoginUser(email, password)
+            const data = await userLogin(email, password)
 
-            if (data) {
-                setUser(data.user)
-                const { token } = data
-                dispatch(signInSuccess(token))
+            if (data && data.user) {
+                if (!data.user.role?.includes('Admin')) {
+                    alert('No tienes los permisos necesarios')
+                    return 'no-permission'
+                }
+
+                dispatch(setUser(data.user))
+                dispatch(signInSuccess(data.token))
 
                 localStorage.setItem(
                     LOCAL_STORAGE_USER_KEY,
                     JSON.stringify(data.user),
                 )
                 localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, data.token)
+
+                const redirectUrl = query.get(REDIRECT_URL_KEY)
+                navigate(redirectUrl || appConfig.authenticatedEntryPath)
 
                 return 'ok'
             } else {

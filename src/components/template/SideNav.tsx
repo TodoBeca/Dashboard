@@ -89,7 +89,6 @@ const SideNav = () => {
                     <div
                         className="side-nav-header"
                         style={{
-                            backgroundColor: '#12263f',
                             paddingBlock: '13px',
                         }}
                     >

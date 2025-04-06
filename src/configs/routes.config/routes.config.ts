@@ -6,56 +6,62 @@ export const publicRoutes: Routes = [...authRoute]
 
 export const protectedRoutes = [
     {
-        key: 'home',
-        path: '/home',
-        component: lazy(() => import('@/views/Home')),
+        key: 'inicio',
+        path: '/inicio',
+        component: lazy(() => import('@/views/Inicio')),
         authority: [],
     },
     /** Example purpose only, please remove */
     {
-        key: 'transactions',
-        path: '/transactions-view',
-        component: lazy(() => import('@/views/demo/TransactionsView')),
+        key: 'becas',
+        path: '/becas-view',
+        component: lazy(() => import('@/views/demo/BecasView')),
         authority: [],
     },
     {
-        key: 'singleMenuItem',
-        path: '/single-menu-view',
-        component: lazy(() => import('@/views/demo/TerminalView')),
+        key: 'usuarios',
+        path: '/usuarios-view',
+        component: lazy(() => import('@/views/demo/UsuariosView')),
         authority: [],
     },
-    {
-        key: 'collapseMenu.item1',
-        path: '/collapse-menu-item-view-1',
-        component: lazy(() => import('@/views/demo/CollapseMenuItemView1')),
-        authority: [],
-    },
-    {
-        key: 'collapseMenu.item2',
-        path: '/collapse-menu-item-view-2',
-        component: lazy(() => import('@/views/demo/CollapseMenuItemView2')),
-        authority: [],
-    },
-    {
-        key: 'groupMenu.single',
-        path: '/group-single-menu-item-view',
-        component: lazy(() => import('@/views/demo/GroupSingleMenuItemView')),
-        authority: [],
-    },
-    {
-        key: 'groupMenu.collapse.item1',
-        path: '/group-collapse-menu-item-view-1',
-        component: lazy(
-            () => import('@/views/demo/GroupCollapseMenuItemView1'),
-        ),
-        authority: [],
-    },
-    {
-        key: 'groupMenu.collapse.item2',
-        path: '/group-collapse-menu-item-view-2',
-        component: lazy(
-            () => import('@/views/demo/GroupCollapseMenuItemView2'),
-        ),
-        authority: [],
-    },
+    // {
+    //     key: 'singleMenuItem',
+    //     path: '/single-menu-view',
+    //     component: lazy(() => import('@/views/demo/TerminalView')),
+    //     authority: [],
+    // },
+    // {
+    //     key: 'collapseMenu.item1',
+    //     path: '/collapse-menu-item-view-1',
+    //     component: lazy(() => import('@/views/demo/CollapseMenuItemView1')),
+    //     authority: [],
+    // },
+    // {
+    //     key: 'collapseMenu.item2',
+    //     path: '/collapse-menu-item-view-2',
+    //     component: lazy(() => import('@/views/demo/CollapseMenuItemView2')),
+    //     authority: [],
+    // },
+    // {
+    //     key: 'groupMenu.single',
+    //     path: '/group-single-menu-item-view',
+    //     component: lazy(() => import('@/views/demo/GroupSingleMenuItemView')),
+    //     authority: [],
+    // },
+    // {
+    //     key: 'groupMenu.collapse.item1',
+    //     path: '/group-collapse-menu-item-view-1',
+    //     component: lazy(
+    //         () => import('@/views/demo/GroupCollapseMenuItemView1'),
+    //     ),
+    //     authority: [],
+    // },
+    // {
+    //     key: 'groupMenu.collapse.item2',
+    //     path: '/group-collapse-menu-item-view-2',
+    //     component: lazy(
+    //         () => import('@/views/demo/GroupCollapseMenuItemView2'),
+    //     ),
+    //     authority: [],
+    // },
 ]

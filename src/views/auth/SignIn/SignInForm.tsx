@@ -141,12 +141,6 @@ const SignInForm = (props: SignInFormProps) => {
                                     ? 'Iniciando sesión...'
                                     : 'Iniciar sesión'}
                             </Button>
-                            <div className="mt-4 text-center">
-                                <span>{`¿Todavía no tienes una cuenta?`} </span>
-                                <ActionLink to={signUpUrl}>
-                                    Registrarse
-                                </ActionLink>
-                            </div>
                         </FormContainer>
                     </Form>
                 )}
