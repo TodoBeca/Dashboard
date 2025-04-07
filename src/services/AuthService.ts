@@ -25,10 +25,14 @@ export async function apiSignUp(data: SignUpCredential) {
 }
 
 export async function apiSignOut() {
-    return ApiService.fetchData({
-        url: '/sign-out',
-        method: 'post',
-    })
+    if (process.env.NODE_ENV === 'development') {
+        return ApiService.fetchData({
+            url: '/sign-out',
+            method: 'post',
+        })
+    }
+
+    return Promise.resolve({ message: 'Signed out (mock)' })
 }
 
 export async function apiForgotPassword(data: ForgotPassword) {
