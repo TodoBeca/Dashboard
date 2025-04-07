@@ -18,31 +18,15 @@ const Side = ({ children, content, ...rest }: SideProps) => {
                 }}
             >
                 {/* <Logo mode="dark" /> */}
-                <div>
-                    <div className="mb-6 flex items-center gap-4">
-                        <Avatar
-                            className="border-2 border-white"
-                            shape="circle"
-                            src="/img/avatars/alex-torriglia.jpg"
-                        />
-                        <div className="text-dark">
-                            <div className="font-semibold text-base">
-                                Alex Torriglia
-                            </div>
-                            <span className="opacity-100">
-                                Co-Founder & CEO
-                            </span>
-                        </div>
-                    </div>
-                    <p className="text-lg text-dark opacity-100">
-                        Xcoop es un joint venture internacional conformado por
-                        compañías de servicios fintech, instituciones
-                        financieras, proveedores de tecnología, unidos con el
-                        fin de crear e impulsar servicios financieros
-                        innovadores y disruptivos, a través de la creación del
-                        primer ecosistema de pagos basado en el envío de remesas
-                        de dinero desde, hacia y entre los países de América
-                        latina.
+                <div className="flex-1 flex justify-center items-center">
+                    <p className="text-lg text-dark opacity-100 text-center max-w-xl">
+                        En TodoBeca publicamos oportunidades académicas para
+                        estudiar en el exterior o en tu país, con información
+                        clara, filtros útiles y convocatorias actualizadas.
+                        Además, ofrecemos asesoramiento personalizado para
+                        ayudarte a preparar tu postulación: desde la elección de
+                        becas hasta la revisión de cartas de motivación, armado
+                        de CV y orientación en el proceso completo.
                     </p>
                 </div>
                 <span className="text-dark">

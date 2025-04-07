@@ -1,6 +1,5 @@
 import { Beca } from '@/@types/beca'
 
-// const API_BASE_URL: string = process.env.REACT_APP_API_BASE_URL as string
 const API_BASE_URL: string = 'https://backend-8vsm.onrender.com'
 
 // AUTH
