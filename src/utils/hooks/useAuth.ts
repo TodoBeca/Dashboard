@@ -160,7 +160,12 @@ function useAuth() {
     }
 
     const signOut = async () => {
-        await apiSignOut()
+        try {
+            await apiSignOut()
+        } catch (error) {
+            console.warn('Falló apiSignOut:', error)
+        }
+
         handleSignOut()
     }
 
