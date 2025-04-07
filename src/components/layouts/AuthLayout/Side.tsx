@@ -20,7 +20,7 @@ const Side = ({ children, content, ...rest }: SideProps) => {
                 {/* <Logo mode="dark" /> */}
                 <div className="flex-1 flex justify-center items-center">
                     <p className="text-lg text-dark opacity-100 text-center max-w-xl">
-                        En TodoBeca publicamos oportunidades académicas para
+                        En TodoBeca.com publicamos oportunidades académicas para
                         estudiar en el exterior o en tu país, con información
                         clara, filtros útiles y convocatorias actualizadas.
                         Además, ofrecemos asesoramiento personalizado para
