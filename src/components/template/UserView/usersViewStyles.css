@@ -1,0 +1,149 @@
+.users-view {
+    @apply p-4;
+}
+
+.users-view-header {
+    @apply flex justify-between items-center mb-6;
+}
+
+.users-view-title {
+    @apply text-2xl font-semibold;
+}
+
+.users-view-actions {
+    @apply flex gap-4;
+}
+
+.users-view-content {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm;
+}
+
+.users-view-list {
+    @apply p-4;
+}
+
+.users-view-form {
+    @apply p-4;
+}
+
+.users-view-form-title {
+    @apply text-xl font-semibold mb-4;
+}
+
+.users-view-form-content {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.users-view-form-actions {
+    @apply flex justify-end gap-4 mt-6;
+}
+
+.users-view-details {
+    @apply p-4;
+}
+
+.users-view-details-title {
+    @apply text-xl font-semibold mb-4;
+}
+
+.users-view-details-content {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.users-view-details-actions {
+    @apply flex justify-end gap-4 mt-6;
+}
+
+.users-container {
+    padding: 1rem;
+}
+
+.filters-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    flex: 1;
+    max-width: 300px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.users-table th,
+.users-table td {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+.users-table th {
+    background-color: #f8fafc;
+    font-weight: 600;
+}
+
+.expanded-row td {
+    padding: 0;
+}
+
+.user-details {
+    padding: 1rem;
+    background-color: #f8fafc;
+}
+
+.details-section {
+    margin-bottom: 1.5rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.detail-item {
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.edit-form-container,
+.add-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    margin-bottom: 1.5rem;
+}
+
+.error-message {
+    color: #dc2626;
+    padding: 1rem;
+    background-color: #fee2e2;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+    background-color: #f8fafc;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+}

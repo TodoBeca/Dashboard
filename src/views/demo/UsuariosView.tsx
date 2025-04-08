@@ -1,6 +1,12 @@
+import UsersList from '@/components/template/UserView/Lists/UsersList'
+
 /** Example purpose only */
 const UsuariosView = () => {
-    return <div>Usuarios</div>
+    return (
+        <div>
+            <UsersList />
+        </div>
+    )
 }
 
 export default UsuariosView

@@ -1,4 +1,5 @@
 import { Beca } from '@/@types/beca'
+import { User } from '@/@types/user'
 
 const API_BASE_URL: string = 'https://backend-8vsm.onrender.com'
 
@@ -122,6 +123,126 @@ export const deleteBeca = async (id: string): Promise<void> => {
         console.log('Beca eliminada exitosamente')
     } catch (error) {
         console.error('Error en deleteBeca:', error)
+        throw error
+    }
+}
+
+// USERS
+export const getUsers = async (): Promise<User[]> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/getUsers`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener usuarios: ${response.status}`)
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error)
+        throw error
+    }
+}
+
+export const createUser = async (userData: {
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    [key: string]: any
+}): Promise<{ msg: string }> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/createUser`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(userData),
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.msg || 'Error al crear el usuario')
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error en createUser:', error)
+        throw error
+    }
+}
+
+export const updateUser = async (
+    id: string,
+    updates: Partial<User>,
+): Promise<User> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/updateUser/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(updates),
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(
+                errorData.message || 'Error al actualizar el usuario',
+            )
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error en updateUser:', error)
+        throw error
+    }
+}
+
+export const deleteUser = async (id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/deleteUser/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'Error al eliminar el usuario')
+        }
+    } catch (error) {
+        console.error('Error en deleteUser:', error)
+        throw error
+    }
+}
+
+export const getUserById = async (id: string): Promise<User> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/getUserById/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener usuario: ${response.status}`)
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error al obtener usuario:', error)
         throw error
     }
 }
