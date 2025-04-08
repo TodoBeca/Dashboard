@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Formik, Form, FieldArray } from 'formik'
-import { Input, Button, Select, Switcher, DatePicker } from '@/components/ui'
+import {
+    Input,
+    Button,
+    Select,
+    Switcher,
+    DatePicker,
+    Upload,
+} from '@/components/ui'
 import { FormItem, FormContainer } from '@/components/ui'
 import { Beca } from '@/@types/beca'
 import { createBeca } from '@/api/api' // Necesitarás crear esta función en tu API
@@ -19,6 +26,7 @@ import {
     idiomaOptions,
     nivelIdiomaOptions,
 } from '@/constants/becaOptions'
+import { uploadFile } from '@/services/FileUploadService'
 
 type AddBecaFormProps = {
     onAddSuccess: (newBeca: Beca) => void
@@ -68,6 +76,7 @@ const initialValues: Partial<Beca> = {
     },
     dificultad: undefined,
     destacada: false,
+    imagen: '',
 }
 
 const AddBecaForm: React.FC<AddBecaFormProps> = ({
@@ -79,9 +88,17 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
     const primaryColorLevel = useAppSelector(
         (state) => state.theme.primaryColorLevel,
     )
+    const [selectedImage, setSelectedImage] = useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string>('')
 
     const handleSubmit = async (values: Partial<Beca>) => {
         try {
+            // Si hay una imagen seleccionada, la subimos primero
+            if (selectedImage) {
+                const imageUrl = await uploadFile(selectedImage, 'becas')
+                values.imagen = imageUrl
+            }
+
             const newBeca = await createBeca(values)
             Swal.fire({
                 title: 'Éxito',
@@ -99,6 +116,22 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                 confirmButtonColor: '#d33',
             })
         }
+    }
+
+    const handleImageSelect = (file: File) => {
+        setSelectedImage(file)
+        // Crear URL temporal para la vista previa
+        const objectUrl = URL.createObjectURL(file)
+        setPreviewUrl(objectUrl)
+    }
+
+    const handleImageRemove = () => {
+        setSelectedImage(null)
+        // Revocar la URL del objeto para liberar memoria
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl)
+        }
+        setPreviewUrl('')
     }
 
     // El resto del componente es idéntico al EditBecaForm, solo cambia el título y los botones
@@ -796,6 +829,67 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     <span className="ml-1">Beca Destacada</span>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Sección de Imagen */}
+                        <div className="mt-4">
+                            <h4 className="font-medium">Imagen de la beca</h4>
+                            <DividerMain className="mb-3" />
+                            <FormItem>
+                                <Upload
+                                    draggable
+                                    uploadLimit={1}
+                                    beforeUpload={(file) => {
+                                        if (file) {
+                                            const isImage =
+                                                file[0].type.startsWith(
+                                                    'image/',
+                                                )
+                                            if (!isImage) {
+                                                return 'Solo se permiten archivos de imagen'
+                                            }
+                                            const isLt2M =
+                                                file[0].size / 1024 / 1024 < 2
+                                            if (!isLt2M) {
+                                                return 'La imagen debe ser menor a 2MB'
+                                            }
+                                        }
+                                        return true
+                                    }}
+                                    onChange={(files) => {
+                                        if (files && files.length > 0) {
+                                            handleImageSelect(files[0])
+                                        }
+                                    }}
+                                    onFileRemove={() => handleImageRemove()}
+                                >
+                                    <div className="my-2 text-center">
+                                        <div className="text-4xl mb-4 flex justify-center">
+                                            <i className="ri-upload-cloud-2-line" />
+                                        </div>
+                                        <p className="font-semibold">
+                                            <span className="text-gray-800 dark:text-white">
+                                                Arrastra tu imagen aquí o{' '}
+                                            </span>
+                                            <span className="text-blue-500">
+                                                búscala
+                                            </span>
+                                        </p>
+                                        <p className="mt-1 opacity-60 dark:text-white">
+                                            Soporta: jpg, png, gif
+                                        </p>
+                                    </div>
+                                </Upload>
+                                {previewUrl && (
+                                    <div className="mt-4">
+                                        <img
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            className="max-w-full h-auto rounded-lg"
+                                        />
+                                    </div>
+                                )}
+                            </FormItem>
                         </div>
 
                         {/* Botones de acción */}
