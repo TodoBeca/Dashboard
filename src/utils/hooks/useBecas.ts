@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Beca } from '@/@types/beca'
-import { getBecas } from '@/api/api'
+import { getBecas, deleteBeca } from '@/api/api'
 
 // Tipo para la respuesta de la API
 type ApiResponse<T> = {
@@ -75,6 +75,14 @@ export const useBecas = () => {
         // Placeholders para futuras implementaciones
         addBeca: () => Promise.reject('Endpoint no implementado'),
         editBeca: () => Promise.reject('Endpoint no implementado'),
-        removeBeca: () => Promise.reject('Endpoint no implementado'),
+        removeBeca: async (id: string) => {
+            try {
+                await deleteBeca(id)
+                await fetchBecas() // Refresh the list after deletion
+            } catch (error) {
+                console.error('Error deleting beca:', error)
+                throw error
+            }
+        },
     }
 }

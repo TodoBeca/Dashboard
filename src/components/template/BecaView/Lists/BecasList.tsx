@@ -11,9 +11,13 @@ import { Beca } from '@/@types/beca'
 import BecaEditForm from '../Forms/editBecaForm'
 import AddBecaButton from '../Buttons/AddBecaButton'
 import AddBecaForm from '../Forms/AddBecaForm'
+import DeleteButton from '../../DeleteButton'
+import BecaDetailsButton from '../Buttons/BecaDetailsButton'
+import EditButton from '../../EditButton'
+import Swal from 'sweetalert2'
 
 const BecasList: React.FC = () => {
-    const { becas, loading, error, fetchBecas } = useBecas()
+    const { becas, loading, error, fetchBecas, removeBeca } = useBecas()
     const [expandedBeca, setExpandedBeca] = useState<string | null>(null)
     const [selectedTipo, setSelectedTipo] = useState<string>('Mostrar Todos')
     const [searchTerm, setSearchTerm] = useState<string>('')
@@ -58,6 +62,39 @@ const BecasList: React.FC = () => {
     const handleAddSuccess = (newBeca: Beca) => {
         setIsAddingBeca(false)
         fetchBecas()
+    }
+
+    const handleDeleteBeca = async (id: string) => {
+        try {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción eliminará la beca permanentemente y no se podrá recuperar.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+            })
+
+            if (result.isConfirmed) {
+                await removeBeca(id)
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'La beca ha sido eliminada correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                })
+            }
+        } catch (error) {
+            console.error('Error deleting beca:', error)
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al eliminar la beca.',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+            })
+        }
     }
 
     if (loading) {
@@ -367,28 +404,30 @@ const BecasList: React.FC = () => {
                                                 {beca.areaEstudio}
                                             </Td>
                                             <Td className="text-center">
-                                                <Button
-                                                    size="sm"
-                                                    onClick={() =>
+                                                <BecaDetailsButton
+                                                    size="medium"
+                                                    becaInfo={() =>
                                                         toggleExpandBeca(
                                                             beca._id,
                                                         )
                                                     }
                                                     className="mr-2"
-                                                >
-                                                    {expandedBeca === beca._id
-                                                        ? 'Ocultar'
-                                                        : 'Ver más'}
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="solid"
-                                                    onClick={() =>
+                                                />
+
+                                                <EditButton
+                                                    size="medium"
+                                                    isOpen={() =>
                                                         setEditingBeca(beca)
                                                     }
-                                                >
-                                                    Editar
-                                                </Button>
+                                                />
+                                                <DeleteButton
+                                                    size="medium"
+                                                    onDelete={() =>
+                                                        handleDeleteBeca(
+                                                            beca._id,
+                                                        )
+                                                    }
+                                                />
                                             </Td>
                                         </tr>
                                         {expandedBeca === beca._id && (

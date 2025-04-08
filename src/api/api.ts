@@ -103,3 +103,25 @@ export const createBeca = async (becaData: Partial<Beca>): Promise<Beca> => {
         throw error
     }
 }
+
+export const deleteBeca = async (id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/beca/deleteBeca/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'Error al eliminar la beca')
+        }
+
+        console.log('Beca eliminada exitosamente')
+    } catch (error) {
+        console.error('Error en deleteBeca:', error)
+        throw error
+    }
+}
