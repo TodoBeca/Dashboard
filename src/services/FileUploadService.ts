@@ -17,6 +17,19 @@ export const uploadFile = async (
             import.meta.env.VITE_CLOUDINARY_API_KEY || '',
         )
 
+        // Debug logs
+        console.log('Cloudinary Environment Variables:')
+        console.log('Cloud Name:', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME)
+        console.log('API Key:', import.meta.env.VITE_CLOUDINARY_API_KEY)
+        console.log(
+            'Upload Preset:',
+            import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+        )
+        console.log(
+            'Full URL:',
+            `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        )
+
         const response = await fetch(
             `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
             {
