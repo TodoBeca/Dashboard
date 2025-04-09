@@ -112,14 +112,6 @@ const BecasList: React.FC = () => {
         )
     }
 
-    if (error) {
-        return (
-            <div className="error-message">
-                Error al cargar las becas: {error}
-            </div>
-        )
-    }
-
     const formatDate = (dateString?: string) => {
         if (!dateString) return 'No especificado'
         return new Date(dateString).toLocaleDateString()
@@ -369,7 +361,16 @@ const BecasList: React.FC = () => {
                         />
                     </div>
 
-                    {filteredBecas.length > 0 ? (
+                    {error ? (
+                        <div className="error-message mt-4">
+                            Error al cargar las becas: {error}
+                        </div>
+                    ) : filteredBecas.length === 0 ? (
+                        <div className="no-results mt-4">
+                            No se encontraron becas con los filtros
+                            seleccionados.
+                        </div>
+                    ) : (
                         <Table className="becas-table">
                             <THead>
                                 <Th
@@ -441,11 +442,6 @@ const BecasList: React.FC = () => {
                                 ))}
                             </TBody>
                         </Table>
-                    ) : (
-                        <div className="no-results">
-                            No se encontraron becas con los filtros
-                            seleccionados.
-                        </div>
                     )}
                 </>
             )}

@@ -275,7 +275,10 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
 
                         {/* Sección Fechas */}
                         <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormItem className="mb-0" label="Fecha inicio">
+                            <FormItem
+                                className="mb-0"
+                                label="Fecha de aplicación inicial"
+                            >
                                 <DatePicker
                                     value={
                                         values.fechaInicioAplicacion
@@ -303,7 +306,10 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                 />
                             </FormItem>
 
-                            <FormItem className="mb-0" label="Fecha fin">
+                            <FormItem
+                                className="mb-0"
+                                label="Fecha de aplicación final"
+                            >
                                 <DatePicker
                                     value={
                                         values.fechaFinAplicacion
@@ -706,13 +712,13 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <FormItem
-                                    label="Dificultad (1-10)"
+                                    label="Dificultad (1-5)"
                                     className="mb-1"
                                 >
                                     <Input
                                         type="number"
                                         min="1"
-                                        max="10"
+                                        max="5"
                                         name="dificultad"
                                         value={values.dificultad || ''}
                                         onChange={handleChange}
