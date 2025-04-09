@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Formik, Form, FieldArray } from 'formik'
 import {
     Input,
@@ -90,6 +90,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
     )
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string>('')
+    const [selectedCountries, setSelectedCountries] = useState<string[]>([])
 
     const handleSubmit = async (values: Partial<Beca>) => {
         try {
@@ -99,6 +100,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                 values.imagen = imageUrl
             }
 
+            values.paisPostulante = selectedCountries
             const newBeca = await createBeca(values)
             Swal.fire({
                 title: 'Éxito',
@@ -132,6 +134,16 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
             URL.revokeObjectURL(previewUrl)
         }
         setPreviewUrl('')
+    }
+
+    const handleCountrySelect = (country: string) => {
+        if (!selectedCountries.includes(country)) {
+            setSelectedCountries([...selectedCountries, country])
+        }
+    }
+
+    const handleCountryRemove = (country: string) => {
+        setSelectedCountries(selectedCountries.filter((c) => c !== country))
     }
 
     // El resto del componente es idéntico al EditBecaForm, solo cambia el título y los botones
@@ -389,6 +401,49 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     }}
                                 />
                             </FormItem>
+                        </div>
+
+                        {/* Paises Postilantes */}
+                        <div>
+                            <div className="mt-4">
+                                <h4 className="font-medium">
+                                    Paises postulantes
+                                </h4>
+                                <DividerMain className="mb-3" />
+                            </div>
+
+                            <FormItem
+                                label="Países postulantes"
+                                className="mb-0"
+                            >
+                                <Select
+                                    options={countryOptions}
+                                    onChange={(val) => {
+                                        if (val?.value) {
+                                            handleCountrySelect(val.value)
+                                        }
+                                    }}
+                                />
+                            </FormItem>
+                            <div className="flex flex-wrap mt-2">
+                                {selectedCountries.map((country, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                    >
+                                        <span>{country}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() =>
+                                                handleCountryRemove(country)
+                                            }
+                                        >
+                                            x
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Sección Requisitos */}

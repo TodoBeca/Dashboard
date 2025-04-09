@@ -11,10 +11,18 @@ import { Beca } from '@/@types/beca'
 import BecaEditForm from '../Forms/editBecaForm'
 import AddBecaButton from '../Buttons/AddBecaButton'
 import AddBecaForm from '../Forms/AddBecaForm'
+import AddBecaListForm from '../Forms/AddBecaListForm'
 import DeleteButton from '../../DeleteButton'
 import BecaDetailsButton from '../Buttons/BecaDetailsButton'
 import EditButton from '../../EditButton'
 import Swal from 'sweetalert2'
+import AddBecasListButton from '../Buttons/AddBecasListButton'
+
+type UploadBecasProps = {
+    onFileUpload: (data: any[][]) => void
+    onClose?: () => void
+    onAddSuccess?: (newBeca: Beca) => void
+}
 
 const BecasList: React.FC = () => {
     const { becas, loading, error, fetchBecas, removeBeca } = useBecas()
@@ -23,6 +31,7 @@ const BecasList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [editingBeca, setEditingBeca] = useState<Beca | null>(null)
     const [isAddingBeca, setIsAddingBeca] = useState(false)
+    const [isAddingBecaList, setIsAddingBecaList] = useState(false)
 
     useEffect(() => {
         fetchBecas()
@@ -50,13 +59,17 @@ const BecasList: React.FC = () => {
         return matchesType && matchesSearch
     })
 
-    const handleEditSuccess = (updatedBeca: Beca) => {
+    const handleEditSuccess = (updatedBeca: Beca): void => {
         setEditingBeca(null)
         fetchBecas()
     }
 
     const handleAddBeca = () => {
         setIsAddingBeca(true)
+    }
+
+    const handleAddBecaList = () => {
+        setIsAddingBecaList(true)
     }
 
     const handleAddSuccess = (newBeca: Beca) => {
@@ -95,6 +108,11 @@ const BecasList: React.FC = () => {
                 confirmButtonColor: '#d33',
             })
         }
+    }
+
+    const handleFileUpload = (data: Beca[]) => {
+        console.log('Uploaded Becas:', data)
+        // Handle the uploaded data as needed
     }
 
     if (loading) {
@@ -332,6 +350,12 @@ const BecasList: React.FC = () => {
                     onEditSuccess={handleEditSuccess}
                     onCancel={() => setEditingBeca(null)}
                 />
+            ) : isAddingBecaList ? (
+                <AddBecaListForm
+                    onAddSuccess={handleAddSuccess}
+                    onCancel={() => setIsAddingBecaList(false)}
+                    onFileUpload={handleFileUpload}
+                />
             ) : (
                 <>
                     <div className="filters-container">
@@ -359,6 +383,10 @@ const BecasList: React.FC = () => {
                             onAddBeca={handleAddBeca}
                             size="medium"
                         />
+                        {/* <AddBecasListButton
+                            onAddBecasList={handleAddBecaList}
+                            size="medium"
+                        /> */}
                     </div>
 
                     {error ? (

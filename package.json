@@ -65,6 +65,7 @@
     "redux-persist": "^6.0.0",
     "sweetalert2": "^11.6.13",
     "twin.macro": "^3.4.0",
+    "xlsx": "^0.18.5",
     "yup": "^1.1.1"
   },
   "devDependencies": {
