@@ -12,6 +12,10 @@ export const uploadFile = async (
             import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '',
         )
         formData.append('folder', folder)
+        formData.append(
+            'api_key',
+            import.meta.env.VITE_CLOUDINARY_API_KEY || '',
+        )
 
         const response = await fetch(
             `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -22,7 +26,12 @@ export const uploadFile = async (
         )
 
         if (!response.ok) {
-            throw new Error('Error uploading file to Cloudinary')
+            const errorData = await response.json()
+            console.error('Cloudinary upload error:', errorData)
+            throw new Error(
+                errorData.error?.message ||
+                    'Error uploading file to Cloudinary',
+            )
         }
 
         const data = await response.json()
