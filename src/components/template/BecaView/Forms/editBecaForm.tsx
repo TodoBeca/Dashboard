@@ -26,6 +26,7 @@ import {
     idiomaOptions,
     nivelIdiomaOptions,
 } from '@/constants/becaOptions'
+import { uploadFile } from '@/services/FileUploadService'
 
 type BecaEditFormProps = {
     beca: Beca
@@ -105,7 +106,20 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
 
     const handleEdit = async (values: Partial<Beca>) => {
         try {
-            const updatedBeca = await updateBeca(beca._id, values)
+            let imageUrl: string | undefined
+
+            // Si hay una imagen seleccionada, súbela
+            if (image) {
+                imageUrl = await uploadFile(image, 'becas') // Cambia 'becas' por el nombre de la carpeta que desees
+            }
+
+            const updatedValues = {
+                ...values,
+                paisPostulante: selectedCountries,
+                imagen: imageUrl || values.imagen, // Usa la URL de la imagen subida o la existente
+            }
+
+            const updatedBeca = await updateBeca(beca._id, updatedValues)
             Swal.fire({
                 title: 'Guardado',
                 text: 'La beca ha sido actualizada correctamente.',
