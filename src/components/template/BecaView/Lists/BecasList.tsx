@@ -202,6 +202,18 @@ const BecasList: React.FC = () => {
                 </div>
             </div>
 
+            <div className="details-section mt-4">
+                <h5 className="font-medium mb-2">Paises postulantes</h5>
+                <div className="w-full">
+                    <div className="detail-item">
+                        <strong>Paises Postulantes:</strong>{' '}
+                        {beca.paisPostulante && beca.paisPostulante.length > 0
+                            ? beca.paisPostulante.join(', ')
+                            : 'No especificado'}
+                    </div>
+                </div>
+            </div>
+
             {/* Requisitos */}
             <div className="details-section mt-4">
                 <h5 className="font-medium mb-2">Requisitos</h5>

@@ -10,7 +10,7 @@ import {
 } from '@/components/ui'
 import { FormItem, FormContainer } from '@/components/ui'
 import { Beca } from '@/@types/beca'
-import { createBeca } from '@/api/api' // Necesitarás crear esta función en tu API
+import { createBeca } from '@/api/api'
 import Swal from 'sweetalert2'
 import DeleteButton from '../../DeleteButton'
 import DividerMain from '../../DividerMain'
@@ -25,6 +25,7 @@ import {
     duracionUnidadOptions,
     idiomaOptions,
     nivelIdiomaOptions,
+    areaEstudioOptions,
 } from '@/constants/becaOptions'
 import { uploadFile } from '@/services/FileUploadService'
 
@@ -160,7 +161,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     : `dark:text-white text-${themeColor}-${primaryColorLevel}`,
                             )}
                         >
-                            Agergar Beca
+                            Agregar Beca
                         </h2>
 
                         {/* Sección Información Básica */}
@@ -251,10 +252,19 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                             </FormItem>
 
                             <FormItem className="mb-0" label="Área de estudio">
-                                <Input
+                                <Select
                                     name="areaEstudio"
-                                    value={values.areaEstudio}
-                                    onChange={handleChange}
+                                    options={areaEstudioOptions}
+                                    value={
+                                        areaEstudioOptions.find(
+                                            (opt) =>
+                                                opt.value ===
+                                                values.areaEstudio,
+                                        ) || null
+                                    }
+                                    onChange={(val) =>
+                                        setFieldValue('areaEstudio', val?.value)
+                                    }
                                 />
                             </FormItem>
 
@@ -403,7 +413,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                             </FormItem>
                         </div>
 
-                        {/* Paises Postilantes */}
+                        {/* Paises Postulantes */}
                         <div>
                             <div className="mt-4">
                                 <h4 className="font-medium">

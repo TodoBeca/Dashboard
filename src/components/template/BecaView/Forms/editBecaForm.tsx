@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Formik, Form, FieldArray } from 'formik'
-import { Input, Button, Select, Switcher, DatePicker } from '@/components/ui'
+import {
+    Input,
+    Button,
+    Select,
+    Switcher,
+    DatePicker,
+    Upload,
+} from '@/components/ui'
 import { FormItem, FormContainer } from '@/components/ui'
 import { Beca } from '@/@types/beca'
 import { updateBeca } from '@/api/api'
@@ -37,7 +44,49 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         (state) => state.theme.primaryColorLevel,
     )
 
+    const [allCountries, setAllCountries] = useState<string[]>(
+        countryOptions.map((option) => option.value),
+    )
+    const [selectedCountries, setSelectedCountries] = useState<string[]>(
+        beca.paisPostulante || [],
+    )
+    const [image, setImage] = useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+    const handleCountrySelect = (country: string) => {
+        if (!selectedCountries.includes(country)) {
+            setSelectedCountries([...selectedCountries, country])
+        }
+    }
+
+    const handleCountryRemove = (country: string) => {
+        setSelectedCountries(selectedCountries.filter((c) => c !== country))
+    }
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (file) {
+            setImage(file)
+        }
+    }
+
+    const handleImageSelect = (file: File) => {
+        setImage(file)
+        setPreviewUrl(URL.createObjectURL(file))
+    }
+
+    const handleImageRemove = () => {
+        setImage(null)
+        setPreviewUrl(null)
+    }
+
     const handleConfirmEdit = (values: Partial<Beca>) => {
+        const updatedValues = {
+            ...values,
+            paisPostulante: selectedCountries,
+            imagen: image ? URL.createObjectURL(image) : undefined,
+        }
+
         Swal.fire({
             title: '¿Estás seguro?',
             text: '¿Deseas guardar los cambios en esta beca?',
@@ -49,7 +98,7 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                handleEdit(values)
+                handleEdit(updatedValues)
             }
         })
     }
@@ -338,6 +387,49 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                             </FormItem>
                         </div>
 
+                        {/* Paises Postulantes */}
+                        <div>
+                            <div className="mt-4">
+                                <h4 className="font-medium">
+                                    Paises postulantes
+                                </h4>
+                                <DividerMain className="mb-3" />
+                            </div>
+
+                            <FormItem
+                                label="Países postulantes"
+                                className="mb-0"
+                            >
+                                <Select
+                                    options={countryOptions}
+                                    onChange={(val) => {
+                                        if (val?.value) {
+                                            handleCountrySelect(val.value)
+                                        }
+                                    }}
+                                />
+                            </FormItem>
+                            <div className="flex flex-wrap mt-2">
+                                {selectedCountries.map((country, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                    >
+                                        <span>{country}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() =>
+                                                handleCountryRemove(country)
+                                            } // Permite borrar el país
+                                        >
+                                            x
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Sección Requisitos */}
                         <div>
                             <div>
@@ -435,7 +527,13 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                                         ?.avalUnivProcedencia ||
                                                     false
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(value) => {
+                                                    setFieldValue(
+                                                        'requisitos.avalUnivProcedencia',
+                                                        !values.requisitos
+                                                            ?.avalUnivProcedencia,
+                                                    )
+                                                }}
                                             />
                                             <span className="ml-1">
                                                 Aval universidad procedencia
@@ -450,7 +548,13 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                                         ?.avalUnivDestino ||
                                                     false
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(value) => {
+                                                    setFieldValue(
+                                                        'requisitos.avalUnivDestino',
+                                                        !values.requisitos
+                                                            ?.avalUnivDestino,
+                                                    )
+                                                }}
                                             />
                                             <span className="ml-1">
                                                 Aval universidad destino
@@ -465,7 +569,13 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                                         ?.cartaRecomendacion ||
                                                     false
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(value) => {
+                                                    setFieldValue(
+                                                        'requisitos.cartaRecomendacion',
+                                                        !values.requisitos
+                                                            ?.cartaRecomendacion,
+                                                    )
+                                                }}
                                             />
                                             <span className="ml-1">
                                                 Carta de recomendación
@@ -480,7 +590,13 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                                         ?.necesidadEconom ||
                                                     false
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(value) => {
+                                                    setFieldValue(
+                                                        'requisitos.necesidadEconom',
+                                                        !values.requisitos
+                                                            ?.necesidadEconom,
+                                                    )
+                                                }}
                                             />
                                             <span className="ml-1">
                                                 Necesidad económica
@@ -608,7 +724,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                             values.cobertura?.estipendio ||
                                             false
                                         }
-                                        onChange={handleChange}
+                                        onChange={(value) => {
+                                            setFieldValue(
+                                                'cobertura.estipendio',
+                                                !values.cobertura?.estipendio,
+                                            )
+                                        }}
                                     />
                                     <span className="ml-1">Estipendio</span>
                                 </label>
@@ -618,7 +739,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                         checked={
                                             values.cobertura?.pasajes || false
                                         }
-                                        onChange={handleChange}
+                                        onChange={(value) => {
+                                            setFieldValue(
+                                                'cobertura.pasajes',
+                                                !values.cobertura?.pasajes,
+                                            )
+                                        }}
                                     />
                                     <span className="ml-1">Pasajes</span>
                                 </label>
@@ -629,7 +755,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                             values.cobertura?.seguroMedico ||
                                             false
                                         }
-                                        onChange={handleChange}
+                                        onChange={(value) => {
+                                            setFieldValue(
+                                                'cobertura.seguroMedico',
+                                                !values.cobertura?.seguroMedico,
+                                            )
+                                        }}
                                     />
                                     <span className="ml-1">Seguro médico</span>
                                 </label>
@@ -640,7 +771,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                             values.cobertura?.alojamiento ||
                                             false
                                         }
-                                        onChange={handleChange}
+                                        onChange={(value) => {
+                                            setFieldValue(
+                                                'cobertura.alojamiento',
+                                                !values.cobertura?.alojamiento,
+                                            )
+                                        }}
                                     />
                                     <span className="ml-1">Alojamiento</span>
                                 </label>
@@ -738,6 +874,80 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     <span className="ml-1">Beca Destacada</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="mt-4">
+                            <h4 className="font-medium">
+                                Imagen actual de la beca
+                            </h4>
+                            <DividerMain className="mb-3" />
+                            {beca.imagen && (
+                                <img
+                                    src={beca.imagen}
+                                    alt="Imagen actual"
+                                    className="max-w-full h-auto rounded-lg"
+                                />
+                            )}
+                        </div>
+
+                        <div className="mt-4">
+                            <h4 className="font-medium">Imagen de la beca</h4>
+                            <DividerMain className="mb-3" />
+                            <FormItem>
+                                <Upload
+                                    draggable
+                                    uploadLimit={1}
+                                    beforeUpload={(file) => {
+                                        if (file) {
+                                            const isImage =
+                                                file[0].type.startsWith(
+                                                    'image/',
+                                                )
+                                            if (!isImage) {
+                                                return 'Solo se permiten archivos de imagen'
+                                            }
+                                            const isLt2M =
+                                                file[0].size / 1024 / 1024 < 2
+                                            if (!isLt2M) {
+                                                return 'La imagen debe ser menor a 2MB'
+                                            }
+                                        }
+                                        return true
+                                    }}
+                                    onChange={(files) => {
+                                        if (files && files.length > 0) {
+                                            handleImageSelect(files[0])
+                                        }
+                                    }}
+                                    onFileRemove={() => handleImageRemove()}
+                                >
+                                    <div className="my-2 text-center">
+                                        <div className="text-4xl mb-4 flex justify-center">
+                                            <i className="ri-upload-cloud-2-line" />
+                                        </div>
+                                        <p className="font-semibold">
+                                            <span className="text-gray-800 dark:text-white">
+                                                Arrastra tu imagen aquí o{' '}
+                                            </span>
+                                            <span className="text-blue-500">
+                                                búscala
+                                            </span>
+                                        </p>
+                                        <p className="mt-1 opacity-60 dark:text-white">
+                                            Soporta: jpg, png, gif
+                                        </p>
+                                    </div>
+                                </Upload>
+                                {previewUrl && (
+                                    <div className="mt-4">
+                                        <img
+                                            src={previewUrl}
+                                            alt="Preview"
+                                            className="max-w-full h-auto rounded-lg"
+                                        />
+                                    </div>
+                                )}
+                            </FormItem>
                         </div>
 
                         {/* Botones de acción */}
