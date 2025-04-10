@@ -10,7 +10,7 @@ type DeleteButtonProps = {
 const DeleteButton: React.FC<DeleteButtonProps> = ({ onDelete, size }) => {
     return (
         <IconButton size={size} onClick={onDelete}>
-            <HiOutlineTrash />
+            <HiOutlineTrash color="red" />
         </IconButton>
     )
 }
