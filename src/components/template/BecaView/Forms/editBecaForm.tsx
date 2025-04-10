@@ -25,6 +25,7 @@ import {
     duracionUnidadOptions,
     idiomaOptions,
     nivelIdiomaOptions,
+    areaEstudioOptions,
 } from '@/constants/becaOptions'
 import { uploadFile } from '@/services/FileUploadService'
 
@@ -53,6 +54,22 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
     )
     const [image, setImage] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [selectedLanguages, setSelectedLanguages] = useState<
+        Array<{ idioma: string; nivelIdioma: string }>
+    >(
+        (beca.requisitos?.idiomasRequeridos || []).map((idioma) => ({
+            idioma: idioma.idioma || '',
+            nivelIdioma: idioma.nivelIdioma || '',
+        })),
+    )
+    const [tempLanguage, setTempLanguage] = useState<{
+        idioma: string
+        nivelIdioma: string
+    }>({ idioma: '', nivelIdioma: '' })
+    const [selectedExams, setSelectedExams] = useState<string[]>(
+        beca.requisitos?.examenesRequeridos || [],
+    )
+    const [tempExam, setTempExam] = useState('')
 
     const handleCountrySelect = (country: string) => {
         if (!selectedCountries.includes(country)) {
@@ -81,11 +98,44 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         setPreviewUrl(null)
     }
 
+    const handleLanguageAdd = (idioma: string, nivelIdioma: string) => {
+        if (!selectedLanguages.some((lang) => lang.idioma === idioma)) {
+            setSelectedLanguages([
+                ...selectedLanguages,
+                { idioma, nivelIdioma },
+            ])
+        }
+        // Reset temporal values
+        setTempLanguage({ idioma: '', nivelIdioma: '' })
+    }
+
+    const handleLanguageRemove = (idioma: string) => {
+        setSelectedLanguages(
+            selectedLanguages.filter((lang) => lang.idioma !== idioma),
+        )
+    }
+
+    const handleExamAdd = () => {
+        if (tempExam.trim() && !selectedExams.includes(tempExam.trim())) {
+            setSelectedExams([...selectedExams, tempExam.trim()])
+            setTempExam('')
+        }
+    }
+
+    const handleExamRemove = (exam: string) => {
+        setSelectedExams(selectedExams.filter((e) => e !== exam))
+    }
+
     const handleConfirmEdit = (values: Partial<Beca>) => {
         const updatedValues = {
             ...values,
             paisPostulante: selectedCountries,
             imagen: image ? URL.createObjectURL(image) : undefined,
+            requisitos: {
+                ...values.requisitos,
+                idiomasRequeridos: selectedLanguages,
+                examenesRequeridos: selectedExams,
+            },
         }
 
         Swal.fire({
@@ -622,92 +672,150 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                         </div>
 
                         {/* Idiomas Requeridos */}
-                        <FieldArray name="requisitos.idiomasRequeridos">
-                            {({ push, remove }) => (
-                                <div className="mt-4">
-                                    <h4 className="font-medium">
-                                        Idiomas requeridos
-                                    </h4>
-                                    <DividerMain className="mb-3" />
-                                    {values.requisitos?.idiomasRequeridos?.map(
-                                        (idioma, index) => (
-                                            <div
-                                                key={index}
-                                                className="grid grid-cols-3 gap-4"
-                                            >
-                                                <FormItem
-                                                    label="Idioma"
-                                                    className="mb-3"
-                                                >
-                                                    <Select
-                                                        name={`requisitos.idiomasRequeridos[${index}].idioma`}
-                                                        options={idiomaOptions}
-                                                        value={
-                                                            idiomaOptions.find(
-                                                                (opt) =>
-                                                                    opt.value ===
-                                                                    idioma.idioma,
-                                                            ) || null
-                                                        }
-                                                        onChange={(val) =>
-                                                            setFieldValue(
-                                                                `requisitos.idiomasRequeridos[${index}].idioma`,
-                                                                val?.value,
-                                                            )
-                                                        }
-                                                    />
-                                                </FormItem>
-                                                <FormItem
-                                                    label="Nivel requerido"
-                                                    className="mb-3"
-                                                >
-                                                    <Select
-                                                        name={`requisitos.idiomasRequeridos[${index}].nivelIdioma`}
-                                                        options={
-                                                            nivelIdiomaOptions
-                                                        }
-                                                        value={
-                                                            nivelIdiomaOptions.find(
-                                                                (opt) =>
-                                                                    opt.value ===
-                                                                    idioma.nivelIdioma,
-                                                            ) || null
-                                                        }
-                                                        onChange={(val) =>
-                                                            setFieldValue(
-                                                                `requisitos.idiomasRequeridos[${index}].nivelIdioma`,
-                                                                val?.value,
-                                                            )
-                                                        }
-                                                    />
-                                                </FormItem>
-                                                <div className="flex items-center">
-                                                    <DeleteButton
-                                                        size="medium"
-                                                        onDelete={() =>
-                                                            remove(index)
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        ),
-                                    )}
+                        <div className="mt-4">
+                            <h4 className="font-medium">Idiomas requeridos</h4>
+                            <DividerMain className="mb-3" />
+
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <FormItem label="Idioma" className="mb-0">
+                                    <Select
+                                        value={
+                                            tempLanguage.idioma
+                                                ? idiomaOptions.find(
+                                                      (opt) =>
+                                                          opt.value ===
+                                                          tempLanguage.idioma,
+                                                  )
+                                                : null
+                                        }
+                                        options={idiomaOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                setTempLanguage((prev) => ({
+                                                    ...prev,
+                                                    idioma: val.value,
+                                                }))
+                                                if (tempLanguage.nivelIdioma) {
+                                                    handleLanguageAdd(
+                                                        val.value,
+                                                        tempLanguage.nivelIdioma,
+                                                    )
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    label="Nivel requerido"
+                                    className="mb-0"
+                                >
+                                    <Select
+                                        value={
+                                            tempLanguage.nivelIdioma
+                                                ? nivelIdiomaOptions.find(
+                                                      (opt) =>
+                                                          opt.value ===
+                                                          tempLanguage.nivelIdioma,
+                                                  )
+                                                : null
+                                        }
+                                        options={nivelIdiomaOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                setTempLanguage((prev) => ({
+                                                    ...prev,
+                                                    nivelIdioma: val.value,
+                                                }))
+                                                if (tempLanguage.idioma) {
+                                                    handleLanguageAdd(
+                                                        tempLanguage.idioma,
+                                                        val.value,
+                                                    )
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                            </div>
+
+                            <div className="flex flex-wrap mt-2">
+                                {selectedLanguages.map((lang, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                    >
+                                        <span>{`${lang.idioma} - ${lang.nivelIdioma}`}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() =>
+                                                handleLanguageRemove(
+                                                    lang.idioma,
+                                                )
+                                            }
+                                        >
+                                            x
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Examenes Requeridos */}
+                        <div className="mt-4">
+                            <h4 className="font-medium">Exámenes requeridos</h4>
+                            <DividerMain className="mb-3" />
+
+                            <div className="grid grid-cols-3 gap-4 mb-4">
+                                <div className="col-span-2">
+                                    <FormItem label="Examen" className="mb-0">
+                                        <Input
+                                            value={tempExam}
+                                            onChange={(e) =>
+                                                setTempExam(e.target.value)
+                                            }
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault()
+                                                    handleExamAdd()
+                                                }
+                                            }}
+                                        />
+                                    </FormItem>
+                                </div>
+                                <div className="flex items-end">
                                     <Button
                                         type="button"
                                         variant="solid"
                                         size="sm"
-                                        onClick={() =>
-                                            push({
-                                                idioma: '',
-                                                nivelIdioma: '',
-                                            })
-                                        }
+                                        onClick={handleExamAdd}
+                                        className="w-full"
                                     >
-                                        Añadir idioma
+                                        Añadir Examen
                                     </Button>
                                 </div>
-                            )}
-                        </FieldArray>
+                            </div>
+
+                            <div className="flex flex-wrap mt-2">
+                                {selectedExams.map((exam, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                    >
+                                        <span>{exam}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() =>
+                                                handleExamRemove(exam)
+                                            }
+                                        >
+                                            x
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
                         {/* Sección Cobertura */}
                         <div>

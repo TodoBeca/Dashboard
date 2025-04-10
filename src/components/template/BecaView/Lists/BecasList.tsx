@@ -290,22 +290,42 @@ const BecasList: React.FC = () => {
                 </div>
 
                 {/* Idiomas Requeridos */}
-                {beca.requisitos?.idiomasRequeridos &&
-                    beca.requisitos.idiomasRequeridos.length > 0 && (
-                        <div className="mt-2">
-                            <strong>Idiomas requeridos:</strong>
-                            <ul className="list-disc pl-5 mt-1">
-                                {beca.requisitos.idiomasRequeridos.map(
-                                    (idioma, idx) => (
-                                        <li key={idx}>
-                                            {idioma.idioma} - Nivel:{' '}
-                                            {idioma.nivelIdioma}
-                                        </li>
-                                    ),
-                                )}
-                            </ul>
-                        </div>
-                    )}
+                <div className="details-grid">
+                    {beca.requisitos?.idiomasRequeridos &&
+                        beca.requisitos.idiomasRequeridos.length > 0 && (
+                            <div className="detail-item">
+                                <div>
+                                    <strong>Idiomas requeridos:</strong>
+                                    <ul className="list-disc pl-5 mt-1">
+                                        {beca.requisitos.idiomasRequeridos.map(
+                                            (idioma, idx) => (
+                                                <li key={idx}>
+                                                    {idioma.idioma} - Nivel:{' '}
+                                                    {idioma.nivelIdioma}
+                                                </li>
+                                            ),
+                                        )}
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+
+                    {beca.requisitos?.examenesRequeridos &&
+                        beca.requisitos.examenesRequeridos.length > 0 && (
+                            <div className="detail-item">
+                                <div>
+                                    <strong>Exámenes requeridos:</strong>
+                                    <ul className="list-disc pl-5 mt-1">
+                                        {beca.requisitos.examenesRequeridos.map(
+                                            (examen, idx) => (
+                                                <li key={idx}>{examen}</li>
+                                            ),
+                                        )}
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                </div>
             </div>
 
             {/* Cobertura */}

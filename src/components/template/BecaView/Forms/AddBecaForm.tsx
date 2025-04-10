@@ -92,6 +92,15 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string>('')
     const [selectedCountries, setSelectedCountries] = useState<string[]>([])
+    const [selectedLanguages, setSelectedLanguages] = useState<
+        Array<{ idioma: string; nivelIdioma: string }>
+    >([])
+    const [tempLanguage, setTempLanguage] = useState<{
+        idioma: string
+        nivelIdioma: string
+    }>({ idioma: '', nivelIdioma: '' })
+    const [selectedExams, setSelectedExams] = useState<string[]>([])
+    const [tempExam, setTempExam] = useState('')
 
     const handleSubmit = async (values: Partial<Beca>) => {
         try {
@@ -102,6 +111,11 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
             }
 
             values.paisPostulante = selectedCountries
+            values.requisitos = {
+                ...values.requisitos,
+                idiomasRequeridos: selectedLanguages,
+                examenesRequeridos: selectedExams,
+            }
             const newBeca = await createBeca(values)
             Swal.fire({
                 title: 'Éxito',
@@ -145,6 +159,34 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
 
     const handleCountryRemove = (country: string) => {
         setSelectedCountries(selectedCountries.filter((c) => c !== country))
+    }
+
+    const handleLanguageAdd = (idioma: string, nivelIdioma: string) => {
+        if (!selectedLanguages.some((lang) => lang.idioma === idioma)) {
+            setSelectedLanguages([
+                ...selectedLanguages,
+                { idioma, nivelIdioma },
+            ])
+        }
+        // Reset temporal values
+        setTempLanguage({ idioma: '', nivelIdioma: '' })
+    }
+
+    const handleLanguageRemove = (idioma: string) => {
+        setSelectedLanguages(
+            selectedLanguages.filter((lang) => lang.idioma !== idioma),
+        )
+    }
+
+    const handleExamAdd = () => {
+        if (tempExam.trim() && !selectedExams.includes(tempExam.trim())) {
+            setSelectedExams([...selectedExams, tempExam.trim()])
+            setTempExam('')
+        }
+    }
+
+    const handleExamRemove = (exam: string) => {
+        setSelectedExams(selectedExams.filter((e) => e !== exam))
     }
 
     // El resto del componente es idéntico al EditBecaForm, solo cambia el título y los botones
@@ -513,6 +555,8 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                             <Input
                                                 type="number"
                                                 step="0.01"
+                                                min={0}
+                                                max={10}
                                                 name="requisitos.promedioMin"
                                                 value={
                                                     values.requisitos
@@ -529,10 +573,10 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                                 name="requisitos.idiomaCondicion"
                                                 checked={
                                                     values.requisitos
-                                                        ?.idiomaCondicion ||
+                                                        ?.idiomaCondicion ??
                                                     false
                                                 }
-                                                onChange={(value) => {
+                                                onChange={() => {
                                                     setFieldValue(
                                                         'requisitos.idiomaCondicion',
                                                         !values.requisitos
@@ -553,7 +597,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                                         ?.avalUnivProcedencia ||
                                                     false
                                                 }
-                                                onChange={(value) => {
+                                                onChange={() => {
                                                     setFieldValue(
                                                         'requisitos.avalUnivProcedencia',
                                                         !values.requisitos
@@ -574,7 +618,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                                         ?.avalUnivDestino ||
                                                     false
                                                 }
-                                                onChange={(value) => {
+                                                onChange={() => {
                                                     setFieldValue(
                                                         'requisitos.avalUnivDestino',
                                                         !values.requisitos
@@ -595,7 +639,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                                         ?.cartaRecomendacion ||
                                                     false
                                                 }
-                                                onChange={(value) => {
+                                                onChange={() => {
                                                     setFieldValue(
                                                         'requisitos.cartaRecomendacion',
                                                         !values.requisitos
@@ -616,7 +660,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                                         ?.necesidadEconom ||
                                                     false
                                                 }
-                                                onChange={(value) => {
+                                                onChange={() => {
                                                     setFieldValue(
                                                         'requisitos.necesidadEconom',
                                                         !values.requisitos
@@ -634,92 +678,150 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                         </div>
 
                         {/* Idiomas Requeridos */}
-                        <FieldArray name="requisitos.idiomasRequeridos">
-                            {({ push, remove }) => (
-                                <div className="mt-4">
-                                    <h4 className="font-medium">
-                                        Idiomas requeridos
-                                    </h4>
-                                    <DividerMain className="mb-3" />
-                                    {values.requisitos?.idiomasRequeridos?.map(
-                                        (idioma, index) => (
-                                            <div
-                                                key={index}
-                                                className="grid grid-cols-3 gap-4"
-                                            >
-                                                <FormItem
-                                                    label="Idioma"
-                                                    className="mb-3"
-                                                >
-                                                    <Select
-                                                        name={`requisitos.idiomasRequeridos[${index}].idioma`}
-                                                        options={idiomaOptions}
-                                                        value={
-                                                            idiomaOptions.find(
-                                                                (opt) =>
-                                                                    opt.value ===
-                                                                    idioma.idioma,
-                                                            ) || null
-                                                        }
-                                                        onChange={(val) =>
-                                                            setFieldValue(
-                                                                `requisitos.idiomasRequeridos[${index}].idioma`,
-                                                                val?.value,
-                                                            )
-                                                        }
-                                                    />
-                                                </FormItem>
-                                                <FormItem
-                                                    label="Nivel requerido"
-                                                    className="mb-3"
-                                                >
-                                                    <Select
-                                                        name={`requisitos.idiomasRequeridos[${index}].nivelIdioma`}
-                                                        options={
-                                                            nivelIdiomaOptions
-                                                        }
-                                                        value={
-                                                            nivelIdiomaOptions.find(
-                                                                (opt) =>
-                                                                    opt.value ===
-                                                                    idioma.nivelIdioma,
-                                                            ) || null
-                                                        }
-                                                        onChange={(val) =>
-                                                            setFieldValue(
-                                                                `requisitos.idiomasRequeridos[${index}].nivelIdioma`,
-                                                                val?.value,
-                                                            )
-                                                        }
-                                                    />
-                                                </FormItem>
-                                                <div className="flex items-center">
-                                                    <DeleteButton
-                                                        size="medium"
-                                                        onDelete={() =>
-                                                            remove(index)
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        ),
-                                    )}
+                        <div className="mt-4">
+                            <h4 className="font-medium">Idiomas requeridos</h4>
+                            <DividerMain className="mb-3" />
+
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <FormItem label="Idioma" className="mb-0">
+                                    <Select
+                                        value={
+                                            tempLanguage.idioma
+                                                ? idiomaOptions.find(
+                                                      (opt) =>
+                                                          opt.value ===
+                                                          tempLanguage.idioma,
+                                                  )
+                                                : null
+                                        }
+                                        options={idiomaOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                setTempLanguage((prev) => ({
+                                                    ...prev,
+                                                    idioma: val.value,
+                                                }))
+                                                if (tempLanguage.nivelIdioma) {
+                                                    handleLanguageAdd(
+                                                        val.value,
+                                                        tempLanguage.nivelIdioma,
+                                                    )
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    label="Nivel requerido"
+                                    className="mb-0"
+                                >
+                                    <Select
+                                        value={
+                                            tempLanguage.nivelIdioma
+                                                ? nivelIdiomaOptions.find(
+                                                      (opt) =>
+                                                          opt.value ===
+                                                          tempLanguage.nivelIdioma,
+                                                  )
+                                                : null
+                                        }
+                                        options={nivelIdiomaOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                setTempLanguage((prev) => ({
+                                                    ...prev,
+                                                    nivelIdioma: val.value,
+                                                }))
+                                                if (tempLanguage.idioma) {
+                                                    handleLanguageAdd(
+                                                        tempLanguage.idioma,
+                                                        val.value,
+                                                    )
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                            </div>
+
+                            <div className="flex flex-wrap mt-2">
+                                {selectedLanguages.map((lang, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                    >
+                                        <span>{`${lang.idioma} - ${lang.nivelIdioma}`}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() =>
+                                                handleLanguageRemove(
+                                                    lang.idioma,
+                                                )
+                                            }
+                                        >
+                                            x
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Examenes Requeridos */}
+                        <div className="mt-4">
+                            <h4 className="font-medium">Exámenes requeridos</h4>
+                            <DividerMain className="mb-3" />
+
+                            <div className="grid grid-cols-3 gap-4 mb-4">
+                                <div className="col-span-2">
+                                    <FormItem label="Examen" className="mb-0">
+                                        <Input
+                                            value={tempExam}
+                                            onChange={(e) =>
+                                                setTempExam(e.target.value)
+                                            }
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault()
+                                                    handleExamAdd()
+                                                }
+                                            }}
+                                        />
+                                    </FormItem>
+                                </div>
+                                <div className="flex items-end">
                                     <Button
                                         type="button"
                                         variant="solid"
                                         size="sm"
-                                        onClick={() =>
-                                            push({
-                                                idioma: '',
-                                                nivelIdioma: '',
-                                            })
-                                        }
+                                        onClick={handleExamAdd}
+                                        className="w-full"
                                     >
-                                        Añadir idioma
+                                        Añadir Examen
                                     </Button>
                                 </div>
-                            )}
-                        </FieldArray>
+                            </div>
+
+                            <div className="flex flex-wrap mt-2">
+                                {selectedExams.map((exam, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                    >
+                                        <span>{exam}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() =>
+                                                handleExamRemove(exam)
+                                            }
+                                        >
+                                            x
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
                         {/* Sección Cobertura */}
                         <div>
@@ -734,7 +836,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                         checked={
                                             values.cobertura?.matricula || false
                                         }
-                                        onChange={(value) => {
+                                        onChange={() => {
                                             setFieldValue(
                                                 'cobertura.matricula',
                                                 !values.cobertura?.matricula,
@@ -750,7 +852,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                             values.cobertura?.estipendio ||
                                             false
                                         }
-                                        onChange={(value) => {
+                                        onChange={() => {
                                             setFieldValue(
                                                 'cobertura.estipendio',
                                                 !values.cobertura?.estipendio,
@@ -765,7 +867,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                         checked={
                                             values.cobertura?.pasajes || false
                                         }
-                                        onChange={(value) => {
+                                        onChange={() => {
                                             setFieldValue(
                                                 'cobertura.pasajes',
                                                 !values.cobertura?.pasajes,
@@ -781,7 +883,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                             values.cobertura?.seguroMedico ||
                                             false
                                         }
-                                        onChange={(value) => {
+                                        onChange={() => {
                                             setFieldValue(
                                                 'cobertura.seguroMedico',
                                                 !values.cobertura?.seguroMedico,
@@ -797,7 +899,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                             values.cobertura?.alojamiento ||
                                             false
                                         }
-                                        onChange={(value) => {
+                                        onChange={() => {
                                             setFieldValue(
                                                 'cobertura.alojamiento',
                                                 !values.cobertura?.alojamiento,

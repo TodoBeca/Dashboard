@@ -274,6 +274,7 @@ export const areaEstudioOptions = [
     { value: 'Antropología', label: 'Antropología' },
     { value: 'Educación', label: 'Educación' },
     { value: 'Comunicación', label: 'Comunicación' },
+    { value: 'Derecho', label: 'Derecho' },
     { value: 'Psicología', label: 'Psicología' },
 
     // Ciencia y Tecnología
