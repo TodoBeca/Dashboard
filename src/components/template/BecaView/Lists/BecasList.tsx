@@ -449,12 +449,7 @@ const BecasList: React.FC = () => {
                     ) : (
                         <Table className="becas-table">
                             <THead>
-                                <Th
-                                    className="text-center"
-                                    style={{ width: '50px' }}
-                                >
-                                    #
-                                </Th>
+                                <Th className="text-center">#</Th>
                                 <Th className="text-center">Nombre</Th>
                                 <Th className="text-center">Tipo</Th>
                                 <Th className="text-center">País</Th>

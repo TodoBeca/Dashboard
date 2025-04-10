@@ -194,6 +194,34 @@ const UsersList: React.FC<UsersListProps> = ({ onEdit, onViewDetails }) => {
                 </div>
             )}
 
+            {/* Redes sociales */}
+            {user.socialMedia &&
+                Object.values(user.socialMedia).some((link) => link) && (
+                    <div className="details-section mt-4">
+                        <h5 className="font-medium mb-2">Redes Sociales</h5>
+                        <div className="details-grid">
+                            {Object.entries(user.socialMedia).map(
+                                ([platform, link]) =>
+                                    link && (
+                                        <div
+                                            key={platform}
+                                            className="detail-item"
+                                        >
+                                            <strong>
+                                                {platform
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    platform.slice(1)}
+                                                :
+                                            </strong>{' '}
+                                            {link}
+                                        </div>
+                                    ),
+                            )}
+                        </div>
+                    </div>
+                )}
+
             {/* Perfil de Becas */}
             {user.scholarshipProfile && (
                 <div className="details-section mt-4">
