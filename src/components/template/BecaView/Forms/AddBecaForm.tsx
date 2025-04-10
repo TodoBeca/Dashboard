@@ -400,15 +400,21 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     value={
                                         values.fechaInicioAplicacion
                                             ? new Date(
-                                                  values.fechaInicioAplicacion,
+                                                  values.fechaInicioAplicacion +
+                                                      'T00:00:00',
                                               )
                                             : null
                                     }
                                     onChange={(date) => {
                                         if (date) {
-                                            const formattedDate = date
-                                                .toISOString()
-                                                .split('T')[0]
+                                            const year = date.getFullYear()
+                                            const month = String(
+                                                date.getMonth() + 1,
+                                            ).padStart(2, '0')
+                                            const day = String(
+                                                date.getDate(),
+                                            ).padStart(2, '0')
+                                            const formattedDate = `${year}-${month}-${day}`
                                             setFieldValue(
                                                 'fechaInicioAplicacion',
                                                 formattedDate,
@@ -431,15 +437,21 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     value={
                                         values.fechaFinAplicacion
                                             ? new Date(
-                                                  values.fechaFinAplicacion,
+                                                  values.fechaFinAplicacion +
+                                                      'T00:00:00',
                                               )
                                             : null
                                     }
                                     onChange={(date) => {
                                         if (date) {
-                                            const formattedDate = date
-                                                .toISOString()
-                                                .split('T')[0]
+                                            const year = date.getFullYear()
+                                            const month = String(
+                                                date.getMonth() + 1,
+                                            ).padStart(2, '0')
+                                            const day = String(
+                                                date.getDate(),
+                                            ).padStart(2, '0')
+                                            const formattedDate = `${year}-${month}-${day}`
                                             setFieldValue(
                                                 'fechaFinAplicacion',
                                                 formattedDate,
