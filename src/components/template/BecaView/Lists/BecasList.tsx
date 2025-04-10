@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Table, Button } from '@/components/ui'
 import THead from '@/components/ui/Table/THead'
 import Th from '@/components/ui/Table/Th'
@@ -17,6 +17,7 @@ import BecaDetailsButton from '../Buttons/BecaDetailsButton'
 import EditButton from '../../EditButton'
 import Swal from 'sweetalert2'
 import AddBecasListButton from '../Buttons/AddBecasListButton'
+import DuplicateBecaButton from '../Buttons/DuplicateBecaButton'
 
 type UploadBecasProps = {
     onFileUpload: (data: any[][]) => void
@@ -25,7 +26,8 @@ type UploadBecasProps = {
 }
 
 const BecasList: React.FC = () => {
-    const { becas, loading, error, fetchBecas, removeBeca } = useBecas()
+    const { becas, loading, error, fetchBecas, removeBeca, addBeca } =
+        useBecas()
     const [expandedBeca, setExpandedBeca] = useState<string | null>(null)
     const [selectedTipo, setSelectedTipo] = useState<string>('Mostrar Todos')
     const [searchTerm, setSearchTerm] = useState<string>('')
@@ -112,7 +114,41 @@ const BecasList: React.FC = () => {
 
     const handleFileUpload = (data: Beca[]) => {
         console.log('Uploaded Becas:', data)
-        // Handle the uploaded data as needed
+    }
+
+    const handleDuplicateBeca = async (beca: Beca) => {
+        try {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción duplicará la beca seleccionada.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, duplicar',
+                cancelButtonText: 'Cancelar',
+            })
+
+            if (result.isConfirmed) {
+                const duplicatedBeca = { ...beca, _id: undefined }
+                await addBeca(duplicatedBeca)
+                Swal.fire({
+                    title: 'Duplicado',
+                    text: 'La beca ha sido duplicada correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                })
+                fetchBecas()
+            }
+        } catch (error) {
+            console.error('Error duplicando beca:', error)
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al duplicar la beca.',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+            })
+        }
     }
 
     if (loading) {
@@ -423,7 +459,12 @@ const BecasList: React.FC = () => {
                                 <Th className="text-center">Tipo</Th>
                                 <Th className="text-center">País</Th>
                                 <Th className="text-center">Área</Th>
-                                <Th className="text-center">Acciones</Th>
+                                <Th
+                                    className="text-center"
+                                    style={{ whiteSpace: 'nowrap' }}
+                                >
+                                    Acciones
+                                </Th>
                             </THead>
                             <TBody>
                                 {filteredBecas.map((beca, index) => (
@@ -444,7 +485,10 @@ const BecasList: React.FC = () => {
                                             <Td className="text-center">
                                                 {beca.areaEstudio}
                                             </Td>
-                                            <Td className="text-center">
+                                            <Td
+                                                className="text-center"
+                                                style={{ whiteSpace: 'nowrap' }}
+                                            >
                                                 <BecaDetailsButton
                                                     size="medium"
                                                     becaInfo={() =>
@@ -454,11 +498,18 @@ const BecasList: React.FC = () => {
                                                     }
                                                     className="mr-2"
                                                 />
-
                                                 <EditButton
                                                     size="medium"
                                                     isOpen={() =>
                                                         setEditingBeca(beca)
+                                                    }
+                                                />
+                                                <DuplicateBecaButton
+                                                    size="medium"
+                                                    onDuplicateBeca={() =>
+                                                        handleDuplicateBeca(
+                                                            beca,
+                                                        )
                                                     }
                                                 />
                                                 <DeleteButton

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Beca } from '@/@types/beca'
-import { getBecas, deleteBeca } from '@/api/api'
+import { getBecas, deleteBeca, createBeca } from '@/api/api'
 
 // Tipo para la respuesta de la API
 type ApiResponse<T> = {
@@ -65,6 +65,16 @@ export const useBecas = () => {
         [becas],
     )
 
+    // Función para crear una nueva beca
+    const addBeca = useCallback(async (becaData: Partial<Beca>) => {
+        try {
+            const newBeca = await createBeca(becaData)
+        } catch (error) {
+            console.error('Error creando beca:', error)
+            throw error
+        }
+    }, [])
+
     return {
         becas,
         loading,
@@ -72,8 +82,8 @@ export const useBecas = () => {
         fetchBecas,
         filterByType,
         searchBecas,
+        addBeca,
         // Placeholders para futuras implementaciones
-        addBeca: () => Promise.reject('Endpoint no implementado'),
         editBeca: () => Promise.reject('Endpoint no implementado'),
         removeBeca: async (id: string) => {
             try {
