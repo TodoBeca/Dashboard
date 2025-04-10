@@ -295,4 +295,18 @@ export const areaEstudioOptions = [
     { value: 'Diseño industrial', label: 'Diseño industrial' },
     { value: 'Automatización', label: 'Automatización' },
     { value: 'Robótica', label: 'Robótica' },
+
+    // Todas las areas
+    {
+        value: 'Programas abiertos a cualquier área de estudio',
+        label: 'Programas abiertos a cualquier área de estudio',
+    },
+    {
+        value: 'Proyectos multidisciplinarios',
+        label: 'Proyectos multidisciplinarios',
+    },
+    {
+        value: 'Intercambios o movilidad académica sin restricción disciplinaria',
+        label: 'Intercambios o movilidad académica sin restricción disciplinaria',
+    },
 ].sort((a, b) => a.label.localeCompare(b.label, 'es'))
