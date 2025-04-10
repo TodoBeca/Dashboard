@@ -391,11 +391,7 @@ const BecasList: React.FC = () => {
                         <strong>Dificultad:</strong>{' '}
                         {beca.dificultad || 'No especificado'}
                     </div>
-                    <div className="detail-item">
-                        <strong>Correo de contacto:</strong>{' '}
-                        {beca.informacionAdicional?.correoContacto ||
-                            'No especificado'}
-                    </div>
+
                     <div className="detail-item">
                         <strong>Beca destacada:</strong>{' '}
                         {beca.destacada ? 'Sí' : 'No'}

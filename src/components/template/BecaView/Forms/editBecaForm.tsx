@@ -783,13 +783,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                         />
                                     </FormItem>
                                 </div>
-                                <div className="flex items-end">
+                                <div className="flex items-end mb-1">
                                     <Button
                                         type="button"
                                         variant="solid"
                                         size="sm"
                                         onClick={handleExamAdd}
-                                        className="w-full"
                                     >
                                         Añadir Examen
                                     </Button>
