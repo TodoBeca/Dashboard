@@ -22,6 +22,7 @@ import {
     nivelAcademicoOptions,
     countryOptions,
     regionOptions,
+    regionCountries,
     duracionUnidadOptions,
     idiomaOptions,
     nivelIdiomaOptions,
@@ -71,14 +72,44 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
     )
     const [tempExam, setTempExam] = useState('')
 
-    const handleCountrySelect = (country: string) => {
+    const getCountriesByRegion = (region: keyof typeof regionCountries) => {
+        return (
+            regionCountries[region]?.map(
+                (country: { value: string; label: string }) => country.value,
+            ) || []
+        )
+    }
+
+    const handleCountrySelect = (
+        country: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
         if (!selectedCountries.includes(country)) {
             setSelectedCountries([...selectedCountries, country])
         }
+        // Reset the country selector
+        setFieldValue('paisPostulante', '')
     }
 
     const handleCountryRemove = (country: string) => {
         setSelectedCountries(selectedCountries.filter((c) => c !== country))
+    }
+
+    const handleRegionSelect = (
+        region: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const countries = getCountriesByRegion(
+            region as keyof typeof regionCountries,
+        )
+        const newCountries = [...new Set([...selectedCountries, ...countries])]
+        setSelectedCountries(newCountries)
+        // Reset the region selector
+        setFieldValue('region', '')
+    }
+
+    const handleClearAllCountries = () => {
+        setSelectedCountries([])
     }
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -460,37 +491,68 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                 <DividerMain className="mb-3" />
                             </div>
 
-                            <FormItem
-                                label="Países postulantes"
-                                className="mb-0"
-                            >
-                                <Select
-                                    options={countryOptions}
-                                    onChange={(val) => {
-                                        if (val?.value) {
-                                            handleCountrySelect(val.value)
-                                        }
-                                    }}
-                                />
-                            </FormItem>
-                            <div className="flex flex-wrap mt-2">
-                                {selectedCountries.map((country, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
-                                    >
-                                        <span>{country}</span>
-                                        <button
-                                            type="button"
-                                            className="ml-2 text-red-500"
-                                            onClick={() =>
-                                                handleCountryRemove(country)
-                                            } // Permite borrar el país
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormItem
+                                    label="Países postulantes"
+                                    className="mb-0"
+                                >
+                                    <Select
+                                        options={countryOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                handleCountrySelect(
+                                                    val.value,
+                                                    setFieldValue,
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                                <FormItem label="Región" className="mb-0">
+                                    <Select
+                                        options={regionOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                handleRegionSelect(
+                                                    val.value,
+                                                    setFieldValue,
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
+                                <div className="flex flex-wrap flex-1">
+                                    {selectedCountries.map((country, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
                                         >
-                                            x
-                                        </button>
-                                    </div>
-                                ))}
+                                            <span>{country}</span>
+                                            <button
+                                                type="button"
+                                                className="ml-2 text-red-500"
+                                                onClick={() =>
+                                                    handleCountryRemove(country)
+                                                }
+                                            >
+                                                x
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {selectedCountries.length > 0 && (
+                                    <Button
+                                        type="button"
+                                        variant="plain"
+                                        size="sm"
+                                        onClick={handleClearAllCountries}
+                                        className="ml-2"
+                                    >
+                                        Borrar todo
+                                    </Button>
+                                )}
                             </div>
                         </div>
 
