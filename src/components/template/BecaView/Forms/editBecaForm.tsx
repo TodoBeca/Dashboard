@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Formik, Form, FieldArray } from 'formik'
 import {
     Input,
@@ -12,7 +12,6 @@ import { FormItem, FormContainer } from '@/components/ui'
 import { Beca } from '@/@types/beca'
 import { updateBeca } from '@/api/api'
 import Swal from 'sweetalert2'
-import DeleteButton from '../../DeleteButton'
 import DividerMain from '../../DividerMain'
 import { NAV_MODE_THEMED } from '@/constants/theme.constant'
 import classNames from 'classnames'
@@ -53,15 +52,21 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
     const [selectedCountries, setSelectedCountries] = useState<string[]>(
         beca.paisPostulante || [],
     )
+    const [selectedDestinoCountries, setSelectedDestinoCountries] = useState<
+        string[]
+    >(beca.paisDestino ? [...beca.paisDestino] : [])
+    const [selectedDestinoRegions, setSelectedDestinoRegions] = useState<
+        string[]
+    >(beca.regionDestino || [])
     const [image, setImage] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [selectedLanguages, setSelectedLanguages] = useState<
         Array<{ idioma: string; nivelIdioma: string }>
     >(
-        (beca.requisitos?.idiomasRequeridos || []).map((idioma) => ({
-            idioma: idioma.idioma || '',
-            nivelIdioma: idioma.nivelIdioma || '',
-        })),
+        beca.requisitos?.idiomasRequeridos?.map((lang) => ({
+            idioma: lang.idioma || '',
+            nivelIdioma: lang.nivelIdioma || '',
+        })) || [],
     )
     const [tempLanguage, setTempLanguage] = useState<{
         idioma: string
@@ -71,6 +76,23 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         beca.requisitos?.examenesRequeridos || [],
     )
     const [tempExam, setTempExam] = useState('')
+
+    useEffect(() => {
+        if (beca) {
+            setSelectedCountries(beca.paisPostulante || [])
+            setSelectedDestinoCountries(
+                beca.paisDestino ? [...beca.paisDestino] : [],
+            )
+            setSelectedDestinoRegions(beca.regionDestino || [])
+            setSelectedLanguages(
+                beca.requisitos?.idiomasRequeridos?.map((lang) => ({
+                    idioma: lang.idioma || '',
+                    nivelIdioma: lang.nivelIdioma || '',
+                })) || [],
+            )
+            setSelectedExams(beca.requisitos?.examenesRequeridos || [])
+        }
+    }, [beca])
 
     const getCountriesByRegion = (region: keyof typeof regionCountries) => {
         return (
@@ -110,6 +132,106 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
 
     const handleClearAllCountries = () => {
         setSelectedCountries([])
+    }
+
+    const getRegionsFromCountries = (countries: string[]) => {
+        console.log('getRegionsFromCountries - Países recibidos:', countries)
+        const regions = new Set<string>()
+        countries.forEach((country) => {
+            console.log('Buscando región para país:', country)
+            for (const [region, regionCountriesList] of Object.entries(
+                regionCountries,
+            )) {
+                console.log('Revisando región:', region)
+                console.log('Países en esta región:', regionCountriesList)
+                if (
+                    regionCountriesList.some(
+                        (c: { value: string; label: string }) =>
+                            c.value === country,
+                    )
+                ) {
+                    console.log('País encontrado en región:', region)
+                    regions.add(region)
+                }
+            }
+        })
+        console.log('Regiones encontradas:', Array.from(regions))
+        return Array.from(regions)
+    }
+
+    const handleDestinoCountrySelect = (
+        country: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        console.log('handleDestinoCountrySelect - País seleccionado:', country)
+        const newCountries = [...selectedDestinoCountries, country]
+        console.log('Nueva lista de países:', newCountries)
+        setSelectedDestinoCountries(newCountries)
+        const regions = getRegionsFromCountries(newCountries)
+        console.log('Regiones a establecer:', regions)
+        setSelectedDestinoRegions(regions)
+        setFieldValue('paisDestino', newCountries)
+        setFieldValue('regionDestino', regions)
+    }
+
+    const handleDestinoCountryRemove = (
+        country: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const newCountries = selectedDestinoCountries.filter(
+            (c) => c !== country,
+        )
+        setSelectedDestinoCountries(newCountries)
+        const regions = getRegionsFromCountries(newCountries)
+        setFieldValue('paisDestino', newCountries)
+        setFieldValue('regionDestino', regions)
+    }
+
+    const handleDestinoRegionSelect = (
+        region: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const newRegions = [...selectedDestinoRegions, region]
+        setSelectedDestinoRegions(newRegions)
+        const countries = getCountriesByRegion(
+            region as keyof typeof regionCountries,
+        )
+        const newCountries = [
+            ...new Set([...selectedDestinoCountries, ...countries]),
+        ]
+        setSelectedDestinoCountries(newCountries)
+        setFieldValue('regionDestino', newRegions)
+        setFieldValue('paisDestino', newCountries)
+    }
+
+    const handleDestinoRegionRemove = (
+        region: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const newRegions = selectedDestinoRegions.filter((r) => r !== region)
+        setSelectedDestinoRegions(newRegions)
+        // Remove countries that belong only to this region
+        const countriesToKeep = selectedDestinoCountries.filter((country) => {
+            const countryRegions = Object.entries(regionCountries)
+                .filter(([_, countries]) =>
+                    countries.some((c) => c.value === country),
+                )
+                .map(([region]) => region)
+            return countryRegions.some(
+                (r) => newRegions.includes(r) && r !== region,
+            )
+        })
+        setSelectedDestinoCountries(countriesToKeep)
+        setFieldValue('regionDestino', newRegions)
+        setFieldValue('paisDestino', countriesToKeep)
+    }
+
+    const handleClearAllDestinoCountries = (
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        setSelectedDestinoCountries([])
+        setFieldValue('paisDestino', [])
+        setFieldValue('regionDestino', [])
     }
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,50 +279,26 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         setSelectedExams(selectedExams.filter((e) => e !== exam))
     }
 
-    const handleConfirmEdit = (values: Partial<Beca>) => {
-        const updatedValues = {
-            ...values,
-            paisPostulante: selectedCountries,
-            imagen: image ? URL.createObjectURL(image) : undefined,
-            requisitos: {
+    const handleSubmit = async (values: Partial<Beca>) => {
+        try {
+            console.log('Valores antes de enviar:', values)
+            // Si hay una imagen seleccionada, la subimos primero
+            if (image) {
+                const imageUrl = await uploadFile(image, 'becas')
+                values.imagen = imageUrl
+            }
+
+            // Aseguramos que las regiones se incluyan en los valores
+            values.paisPostulante = selectedCountries
+            values.paisDestino = selectedDestinoCountries
+            values.regionDestino = selectedDestinoRegions
+            values.requisitos = {
                 ...values.requisitos,
                 idiomasRequeridos: selectedLanguages,
                 examenesRequeridos: selectedExams,
-            },
-        }
-
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: '¿Deseas guardar los cambios en esta beca?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                handleEdit(updatedValues)
             }
-        })
-    }
-
-    const handleEdit = async (values: Partial<Beca>) => {
-        try {
-            let imageUrl: string | undefined
-
-            // Si hay una imagen seleccionada, súbela
-            if (image) {
-                imageUrl = await uploadFile(image, 'becas') // Cambia 'becas' por el nombre de la carpeta que desees
-            }
-
-            const updatedValues = {
-                ...values,
-                paisPostulante: selectedCountries,
-                imagen: imageUrl || values.imagen, // Usa la URL de la imagen subida o la existente
-            }
-
-            const updatedBeca = await updateBeca(beca._id, updatedValues)
+            console.log('Valores finales a enviar:', values)
+            const updatedBeca = await updateBeca(beca._id, values)
             Swal.fire({
                 title: 'Guardado',
                 text: 'La beca ha sido actualizada correctamente.',
@@ -219,15 +317,55 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         }
     }
 
+    const initialValues: Partial<Beca> = {
+        nombreBeca: beca.nombreBeca,
+        tipoBeca: beca.tipoBeca,
+        nivelAcademico: beca.nivelAcademico,
+        paisDestino: beca.paisDestino || [],
+        regionDestino: beca.regionDestino || [],
+        areaEstudio: beca.areaEstudio,
+        universidadDestino: beca.universidadDestino || '',
+        entidadBecaria: beca.entidadBecaria || '',
+        cantCupos: beca.cantCupos,
+        duracion: beca.duracion || {
+            duracionMinima: undefined,
+            duracionMaxima: undefined,
+            duracionUnidad: '',
+        },
+        fechaInicioAplicacion: beca.fechaInicioAplicacion || '',
+        fechaFinAplicacion: beca.fechaFinAplicacion || '',
+        requisitos: {
+            nivelAcademicoMin:
+                beca.requisitos?.nivelAcademicoMin || 'Doctorado',
+            edadMax: beca.requisitos?.edadMax,
+            promedioMin: beca.requisitos?.promedioMin,
+            idiomaCondicion: beca.requisitos?.idiomaCondicion || false,
+            avalUnivProcedencia: beca.requisitos?.avalUnivProcedencia || false,
+            avalUnivDestino: beca.requisitos?.avalUnivDestino || false,
+            cartaRecomendacion: beca.requisitos?.cartaRecomendacion || false,
+            necesidadEconom: beca.requisitos?.necesidadEconom || false,
+            idiomasRequeridos: beca.requisitos?.idiomasRequeridos || [],
+        },
+        cobertura: {
+            matricula: beca.cobertura?.matricula || false,
+            estipendio: beca.cobertura?.estipendio || false,
+            pasajes: beca.cobertura?.pasajes || false,
+            seguroMedico: beca.cobertura?.seguroMedico || false,
+            alojamiento: beca.cobertura?.alojamiento || false,
+            montoMensualMin: beca.cobertura?.montoMensualMin,
+            montoMensualMax: beca.cobertura?.montoMensualMax,
+        },
+        informacionAdicional: {
+            sitioWeb: beca.informacionAdicional?.sitioWeb || '',
+            correoContacto: beca.informacionAdicional?.correoContacto || '',
+        },
+        dificultad: beca.dificultad,
+        destacada: beca.destacada || false,
+        imagen: beca.imagen || '',
+    }
+
     return (
-        <Formik
-            initialValues={{
-                ...beca,
-                fechaInicioAplicacion: beca.fechaInicioAplicacion || '',
-                fechaFinAplicacion: beca.fechaFinAplicacion || '',
-            }}
-            onSubmit={(values) => handleConfirmEdit(values)}
-        >
+        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
             {({ values, handleChange, setFieldValue }) => (
                 <Form>
                     <FormContainer>
@@ -292,48 +430,20 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                 />
                             </FormItem>
 
-                            <FormItem className="mb-0" label="País destino">
-                                <Select
-                                    name="paisDestino"
-                                    options={countryOptions}
-                                    value={
-                                        countryOptions.find(
-                                            (opt) =>
-                                                opt.value ===
-                                                values.paisDestino,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue('paisDestino', val?.value)
-                                    }
-                                />
-                            </FormItem>
-
-                            <FormItem className="mb-0" label="Región destino">
-                                <Select
-                                    name="regionDestino"
-                                    options={regionOptions}
-                                    value={
-                                        regionOptions.find(
-                                            (opt) =>
-                                                opt.value ===
-                                                values.regionDestino,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue(
-                                            'regionDestino',
-                                            val?.value,
-                                        )
-                                    }
-                                />
-                            </FormItem>
-
                             <FormItem className="mb-0" label="Área de estudio">
-                                <Input
+                                <Select
                                     name="areaEstudio"
-                                    value={values.areaEstudio}
-                                    onChange={handleChange}
+                                    options={areaEstudioOptions}
+                                    value={
+                                        areaEstudioOptions.find(
+                                            (opt) =>
+                                                opt.value ===
+                                                values.areaEstudio,
+                                        ) || null
+                                    }
+                                    onChange={(val) =>
+                                        setFieldValue('areaEstudio', val?.value)
+                                    }
                                 />
                             </FormItem>
 
@@ -480,6 +590,79 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     }}
                                 />
                             </FormItem>
+                        </div>
+
+                        {/* Países de Destino */}
+                        <div className="md:col-span-2">
+                            <div className="mt-4">
+                                <h4 className="font-medium">
+                                    Países de destino
+                                </h4>
+                                <DividerMain className="mb-3" />
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4">
+                                <FormItem
+                                    label="Países destino"
+                                    className="mb-0"
+                                >
+                                    <Select
+                                        options={countryOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                handleDestinoCountrySelect(
+                                                    val.value,
+                                                    setFieldValue,
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                            </div>
+
+                            <div className="mt-4">
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedDestinoCountries.map(
+                                        (country, index) => (
+                                            <div
+                                                key={`country-${index}`}
+                                                className="flex items-center bg-gray-200 rounded-full px-2 py-1"
+                                            >
+                                                <span>{country}</span>
+                                                <button
+                                                    type="button"
+                                                    className="ml-2 text-red-500"
+                                                    onClick={() =>
+                                                        handleDestinoCountryRemove(
+                                                            country,
+                                                            setFieldValue,
+                                                        )
+                                                    }
+                                                >
+                                                    x
+                                                </button>
+                                            </div>
+                                        ),
+                                    )}
+                                </div>
+                            </div>
+
+                            {selectedDestinoCountries.length > 0 && (
+                                <div className="mt-2">
+                                    <Button
+                                        type="button"
+                                        variant="plain"
+                                        size="sm"
+                                        onClick={() =>
+                                            handleClearAllDestinoCountries(
+                                                setFieldValue,
+                                            )
+                                        }
+                                    >
+                                        Borrar todo
+                                    </Button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Paises Postulantes */}

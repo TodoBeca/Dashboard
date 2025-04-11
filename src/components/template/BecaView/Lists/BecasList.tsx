@@ -51,6 +51,7 @@ const BecasList: React.FC = () => {
             beca.nombreBeca.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (beca.paisDestino &&
                 beca.paisDestino
+                    .join(', ')
                     .toLowerCase()
                     .includes(searchTerm.toLowerCase())) ||
             (beca.areaEstudio &&
@@ -189,11 +190,16 @@ const BecasList: React.FC = () => {
                         <strong>Nivel académico:</strong> {beca.nivelAcademico}
                     </div>
                     <div className="detail-item">
-                        <strong>País destino:</strong> {beca.paisDestino}
+                        <strong>País destino:</strong>{' '}
+                        {beca.paisDestino && beca.paisDestino.length > 0
+                            ? beca.paisDestino.join(', ')
+                            : 'No especificado'}
                     </div>
                     <div className="detail-item">
                         <strong>Región destino:</strong>{' '}
-                        {beca.regionDestino || 'No especificado'}
+                        {beca.regionDestino && beca.regionDestino.length > 0
+                            ? beca.regionDestino.join(', ')
+                            : 'No especificado'}
                     </div>
                     <div className="detail-item">
                         <strong>Área de estudio:</strong> {beca.areaEstudio}

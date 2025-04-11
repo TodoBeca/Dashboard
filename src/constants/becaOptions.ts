@@ -316,8 +316,8 @@ export const areaEstudioOptions = [
 
     // Todas las areas
     {
-        value: 'Programas abiertos a cualquier área de estudio',
-        label: 'Programas abiertos a cualquier área de estudio',
+        value: 'Abierto a cualquier área de estudio',
+        label: 'Abierto a cualquier área de estudio',
     },
     {
         value: 'Proyectos multidisciplinarios',

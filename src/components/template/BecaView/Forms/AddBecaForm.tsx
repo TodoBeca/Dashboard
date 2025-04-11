@@ -39,8 +39,8 @@ const initialValues: Partial<Beca> = {
     nombreBeca: '',
     tipoBeca: 'Doctorado',
     nivelAcademico: 'Doctorado',
-    paisDestino: '',
-    regionDestino: '',
+    paisDestino: [],
+    regionDestino: [],
     areaEstudio: '',
     universidadDestino: '',
     entidadBecaria: '',
@@ -93,6 +93,9 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string>('')
     const [selectedCountries, setSelectedCountries] = useState<string[]>([])
+    const [selectedDestinoCountries, setSelectedDestinoCountries] = useState<
+        string[]
+    >([])
     const [selectedLanguages, setSelectedLanguages] = useState<
         Array<{ idioma: string; nivelIdioma: string }>
     >([])
@@ -143,6 +146,52 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
         setSelectedCountries([])
     }
 
+    const getRegionsFromCountries = (countries: string[]) => {
+        const regions = new Set<string>()
+        countries.forEach((country) => {
+            Object.entries(regionCountries).forEach(
+                ([region, regionCountries]) => {
+                    if (regionCountries.some((c) => c.value === country)) {
+                        regions.add(region)
+                    }
+                },
+            )
+        })
+        return Array.from(regions)
+    }
+
+    const handleDestinoCountrySelect = (
+        country: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const newCountries = [...selectedDestinoCountries, country]
+        setSelectedDestinoCountries(newCountries)
+        const regions = getRegionsFromCountries(newCountries)
+        setFieldValue('paisDestino', newCountries)
+        setFieldValue('regionDestino', regions)
+    }
+
+    const handleDestinoCountryRemove = (
+        country: string,
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const newCountries = selectedDestinoCountries.filter(
+            (c) => c !== country,
+        )
+        setSelectedDestinoCountries(newCountries)
+        const regions = getRegionsFromCountries(newCountries)
+        setFieldValue('paisDestino', newCountries)
+        setFieldValue('regionDestino', regions)
+    }
+
+    const handleClearAllDestinoCountries = (
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        setSelectedDestinoCountries([])
+        setFieldValue('paisDestino', [])
+        setFieldValue('regionDestino', [])
+    }
+
     const handleSubmit = async (values: Partial<Beca>) => {
         try {
             // Si hay una imagen seleccionada, la subimos primero
@@ -152,6 +201,10 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
             }
 
             values.paisPostulante = selectedCountries
+            values.paisDestino = selectedDestinoCountries
+            values.regionDestino = getRegionsFromCountries(
+                selectedDestinoCountries,
+            )
             values.requisitos = {
                 ...values.requisitos,
                 idiomasRequeridos: selectedLanguages,
@@ -280,43 +333,6 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     onChange={(val) =>
                                         setFieldValue(
                                             'nivelAcademico',
-                                            val?.value,
-                                        )
-                                    }
-                                />
-                            </FormItem>
-
-                            <FormItem className="mb-0" label="País destino">
-                                <Select
-                                    name="paisDestino"
-                                    options={countryOptions}
-                                    value={
-                                        countryOptions.find(
-                                            (opt) =>
-                                                opt.value ===
-                                                values.paisDestino,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue('paisDestino', val?.value)
-                                    }
-                                />
-                            </FormItem>
-
-                            <FormItem className="mb-0" label="Región destino">
-                                <Select
-                                    name="regionDestino"
-                                    options={regionOptions}
-                                    value={
-                                        regionOptions.find(
-                                            (opt) =>
-                                                opt.value ===
-                                                values.regionDestino,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue(
-                                            'regionDestino',
                                             val?.value,
                                         )
                                     }
@@ -495,6 +511,79 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     }}
                                 />
                             </FormItem>
+                        </div>
+
+                        {/* Países y Regiones de Destino */}
+                        <div className="md:col-span-2">
+                            <div className="mt-4">
+                                <h4 className="font-medium">
+                                    Países de destino
+                                </h4>
+                                <DividerMain className="mb-3" />
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4">
+                                <FormItem
+                                    label="Países destino"
+                                    className="mb-0"
+                                >
+                                    <Select
+                                        options={countryOptions}
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                handleDestinoCountrySelect(
+                                                    val.value,
+                                                    setFieldValue,
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                            </div>
+
+                            <div className="mt-4">
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedDestinoCountries.map(
+                                        (country, index) => (
+                                            <div
+                                                key={`country-${index}`}
+                                                className="flex items-center bg-gray-200 rounded-full px-2 py-1"
+                                            >
+                                                <span>{country}</span>
+                                                <button
+                                                    type="button"
+                                                    className="ml-2 text-red-500"
+                                                    onClick={() =>
+                                                        handleDestinoCountryRemove(
+                                                            country,
+                                                            setFieldValue,
+                                                        )
+                                                    }
+                                                >
+                                                    x
+                                                </button>
+                                            </div>
+                                        ),
+                                    )}
+                                </div>
+                            </div>
+
+                            {selectedDestinoCountries.length > 0 && (
+                                <div className="mt-2">
+                                    <Button
+                                        type="button"
+                                        variant="plain"
+                                        size="sm"
+                                        onClick={() =>
+                                            handleClearAllDestinoCountries(
+                                                setFieldValue,
+                                            )
+                                        }
+                                    >
+                                        Borrar todo
+                                    </Button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Paises Postulantes */}

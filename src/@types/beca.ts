@@ -55,8 +55,8 @@ export type TipoBeca =
 
 export interface Beca {
     _id: string
-    paisDestino: string
-    regionDestino: string
+    paisDestino: string[]
+    regionDestino: string[]
     nombreBeca: string
     cantCupos?: number
     nivelAcademico: string
