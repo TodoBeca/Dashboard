@@ -35,6 +35,11 @@ type BecaEditFormProps = {
     onCancel: () => void
 }
 
+type SelectOption = {
+    value: string
+    label: string
+}
+
 const BecaEditForm: React.FC<BecaEditFormProps> = ({
     beca,
     onEditSuccess,
@@ -163,15 +168,38 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         country: string,
         setFieldValue: (field: string, value: any) => void,
     ) => {
-        console.log('handleDestinoCountrySelect - País seleccionado:', country)
-        const newCountries = [...selectedDestinoCountries, country]
-        console.log('Nueva lista de países:', newCountries)
-        setSelectedDestinoCountries(newCountries)
-        const regions = getRegionsFromCountries(newCountries)
-        console.log('Regiones a establecer:', regions)
-        setSelectedDestinoRegions(regions)
-        setFieldValue('paisDestino', newCountries)
-        setFieldValue('regionDestino', regions)
+        const updatedCountries = [...selectedDestinoCountries, country]
+        setSelectedDestinoCountries(updatedCountries)
+        const updatedRegions = getRegionsFromCountries(updatedCountries)
+        setSelectedDestinoRegions(updatedRegions)
+        setFieldValue('paisDestino', updatedCountries)
+        setFieldValue('regionDestino', updatedRegions)
+        // Reset the country selector
+        setFieldValue('paisDestinoSelect', null)
+    }
+
+    const handleDestinoRegionSelect = (
+        region:
+            | 'América Latina'
+            | 'Centroamérica'
+            | 'América del Norte'
+            | 'Europa'
+            | 'Asia'
+            | 'Oceanía'
+            | 'África',
+        setFieldValue: (field: string, value: any) => void,
+    ) => {
+        const regionCountries = getCountriesByRegion(region)
+        const updatedCountries = [
+            ...new Set([...selectedDestinoCountries, ...regionCountries]),
+        ]
+        setSelectedDestinoCountries(updatedCountries)
+        const updatedRegions = getRegionsFromCountries(updatedCountries)
+        setSelectedDestinoRegions(updatedRegions)
+        setFieldValue('paisDestino', updatedCountries)
+        setFieldValue('regionDestino', updatedRegions)
+        // Reset the region selector
+        setFieldValue('regionDestinoSelect', null)
     }
 
     const handleDestinoCountryRemove = (
@@ -185,23 +213,6 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         const regions = getRegionsFromCountries(newCountries)
         setFieldValue('paisDestino', newCountries)
         setFieldValue('regionDestino', regions)
-    }
-
-    const handleDestinoRegionSelect = (
-        region: string,
-        setFieldValue: (field: string, value: any) => void,
-    ) => {
-        const newRegions = [...selectedDestinoRegions, region]
-        setSelectedDestinoRegions(newRegions)
-        const countries = getCountriesByRegion(
-            region as keyof typeof regionCountries,
-        )
-        const newCountries = [
-            ...new Set([...selectedDestinoCountries, ...countries]),
-        ]
-        setSelectedDestinoCountries(newCountries)
-        setFieldValue('regionDestino', newRegions)
-        setFieldValue('paisDestino', newCountries)
     }
 
     const handleDestinoRegionRemove = (
@@ -230,6 +241,7 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         setFieldValue: (field: string, value: any) => void,
     ) => {
         setSelectedDestinoCountries([])
+        setSelectedDestinoRegions([])
         setFieldValue('paisDestino', [])
         setFieldValue('regionDestino', [])
     }
@@ -323,6 +335,8 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         nivelAcademico: beca.nivelAcademico,
         paisDestino: beca.paisDestino || [],
         regionDestino: beca.regionDestino || [],
+        paisDestinoSelect: null,
+        regionDestinoSelect: null,
         areaEstudio: beca.areaEstudio,
         universidadDestino: beca.universidadDestino || '',
         entidadBecaria: beca.entidadBecaria || '',
@@ -601,18 +615,70 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                 <DividerMain className="mb-3" />
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormItem
                                     label="Países destino"
                                     className="mb-0"
                                 >
-                                    <Select
-                                        options={countryOptions}
+                                    <Select<SelectOption>
+                                        name="paisDestinoSelect"
+                                        value={
+                                            values.paisDestinoSelect
+                                                ? countryOptions.find(
+                                                      (opt) =>
+                                                          opt.value ===
+                                                          values.paisDestinoSelect,
+                                                  )
+                                                : null
+                                        }
+                                        options={
+                                            countryOptions as SelectOption[]
+                                        }
                                         onChange={(val) => {
                                             if (val?.value) {
                                                 handleDestinoCountrySelect(
                                                     val.value,
                                                     setFieldValue,
+                                                )
+                                                setFieldValue(
+                                                    'paisDestinoSelect',
+                                                    null,
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </FormItem>
+                                <FormItem label="Región" className="mb-0">
+                                    <Select<SelectOption>
+                                        name="regionDestinoSelect"
+                                        value={
+                                            values.regionDestinoSelect
+                                                ? regionOptions.find(
+                                                      (opt) =>
+                                                          opt.value ===
+                                                          values.regionDestinoSelect,
+                                                  )
+                                                : null
+                                        }
+                                        options={
+                                            regionOptions as SelectOption[]
+                                        }
+                                        onChange={(val) => {
+                                            if (val?.value) {
+                                                handleDestinoRegionSelect(
+                                                    val.value as
+                                                        | 'América Latina'
+                                                        | 'Centroamérica'
+                                                        | 'América del Norte'
+                                                        | 'Europa'
+                                                        | 'Asia'
+                                                        | 'Oceanía'
+                                                        | 'África',
+                                                    setFieldValue,
+                                                )
+                                                setFieldValue(
+                                                    'regionDestinoSelect',
+                                                    null,
                                                 )
                                             }
                                         }}
@@ -679,7 +745,9 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     label="Países postulantes"
                                     className="mb-0"
                                 >
-                                    <Select
+                                    <Select<{ value: string; label: string }>
+                                        name="paisPostulante"
+                                        value={null}
                                         options={countryOptions}
                                         onChange={(val) => {
                                             if (val?.value) {
@@ -692,7 +760,9 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     />
                                 </FormItem>
                                 <FormItem label="Región" className="mb-0">
-                                    <Select
+                                    <Select<{ value: string; label: string }>
+                                        name="region"
+                                        value={null}
                                         options={regionOptions}
                                         onChange={(val) => {
                                             if (val?.value) {

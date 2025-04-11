@@ -74,6 +74,8 @@ export interface Beca {
     destacada?: boolean
     dificultad?: number
     imagen?: string
+    paisDestinoSelect?: string | null
+    regionDestinoSelect?: string | null
 }
 
 export type NuevaBeca = Omit<Beca, '_id'>

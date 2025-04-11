@@ -34,6 +34,7 @@ const BecasList: React.FC = () => {
     const [editingBeca, setEditingBeca] = useState<Beca | null>(null)
     const [isAddingBeca, setIsAddingBeca] = useState(false)
     const [isAddingBecaList, setIsAddingBecaList] = useState(false)
+    const [showAllCountries, setShowAllCountries] = useState<boolean>(false)
 
     useEffect(() => {
         fetchBecas()
@@ -191,9 +192,28 @@ const BecasList: React.FC = () => {
                     </div>
                     <div className="detail-item">
                         <strong>País destino:</strong>{' '}
-                        {beca.paisDestino && beca.paisDestino.length > 0
-                            ? beca.paisDestino.join(', ')
-                            : 'No especificado'}
+                        {beca.paisDestino && beca.paisDestino.length > 0 ? (
+                            <>
+                                {beca.paisDestino.length > 3
+                                    ? `${beca.paisDestino.slice(0, 3).join(', ')}... `
+                                    : beca.paisDestino.join(', ')}
+                                {beca.paisDestino.length > 3 && (
+                                    <button
+                                        onClick={() => {
+                                            setShowAllCountries((prev) => !prev)
+                                        }}
+                                        className="text-blue-500"
+                                    >
+                                        ver más
+                                    </button>
+                                )}
+                                {showAllCountries && (
+                                    <div>{beca.paisDestino.join(', ')}</div>
+                                )}
+                            </>
+                        ) : (
+                            'No especificado'
+                        )}
                     </div>
                     <div className="detail-item">
                         <strong>Región destino:</strong>{' '}
@@ -497,7 +517,11 @@ const BecasList: React.FC = () => {
                                                 {beca.tipoBeca}
                                             </Td>
                                             <Td className="text-center">
-                                                {beca.paisDestino}
+                                                {beca.paisDestino.length > 3
+                                                    ? `${beca.paisDestino.slice(0, 3).join(', ')}...`
+                                                    : beca.paisDestino.join(
+                                                          ', ',
+                                                      )}
                                             </Td>
                                             <Td className="text-center">
                                                 {beca.areaEstudio}
