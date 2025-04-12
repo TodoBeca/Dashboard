@@ -408,89 +408,97 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                 />
                             </FormItem>
 
-                            <FormItem label="Tipo de beca" className="mb-0">
-                                <Select
-                                    name="tipoBeca"
-                                    options={tipoBecaOptions}
-                                    value={
-                                        tipoBecaOptions.find(
-                                            (opt) =>
-                                                opt.value === values.tipoBeca,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue('tipoBeca', val?.value)
-                                    }
-                                />
-                            </FormItem>
+                            <div className="md:col-span-2 grid grid-cols-3 gap-4">
+                                <FormItem label="Tipo de beca" className="mb-0">
+                                    <Select
+                                        name="tipoBeca"
+                                        options={tipoBecaOptions}
+                                        value={
+                                            tipoBecaOptions.find(
+                                                (opt) =>
+                                                    opt.value ===
+                                                    values.tipoBeca,
+                                            ) || null
+                                        }
+                                        onChange={(val) =>
+                                            setFieldValue(
+                                                'tipoBeca',
+                                                val?.value,
+                                            )
+                                        }
+                                    />
+                                </FormItem>
 
-                            <FormItem label="Nivel académico" className="mb-0">
-                                <Select
-                                    name="nivelAcademico"
-                                    options={nivelAcademicoOptions}
-                                    value={
-                                        nivelAcademicoOptions.find(
-                                            (opt) =>
-                                                opt.value ===
-                                                values.nivelAcademico,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue(
-                                            'nivelAcademico',
-                                            val?.value,
-                                        )
-                                    }
-                                />
-                            </FormItem>
+                                <FormItem
+                                    label="Nivel académico"
+                                    className="mb-0"
+                                >
+                                    <Select
+                                        name="nivelAcademico"
+                                        options={nivelAcademicoOptions}
+                                        value={
+                                            nivelAcademicoOptions.find(
+                                                (opt) =>
+                                                    opt.value ===
+                                                    values.nivelAcademico,
+                                            ) || null
+                                        }
+                                        onChange={(val) =>
+                                            setFieldValue(
+                                                'nivelAcademico',
+                                                val?.value,
+                                            )
+                                        }
+                                    />
+                                </FormItem>
 
-                            <FormItem className="mb-0" label="Área de estudio">
-                                <Select
-                                    name="areaEstudio"
-                                    options={areaEstudioOptions}
-                                    value={
-                                        areaEstudioOptions.find(
-                                            (opt) =>
-                                                opt.value ===
-                                                values.areaEstudio,
-                                        ) || null
-                                    }
-                                    onChange={(val) =>
-                                        setFieldValue('areaEstudio', val?.value)
-                                    }
-                                />
-                            </FormItem>
+                                <FormItem
+                                    className="mb-0"
+                                    label="Área de estudio"
+                                >
+                                    <Select
+                                        name="areaEstudio"
+                                        options={areaEstudioOptions}
+                                        value={
+                                            areaEstudioOptions.find(
+                                                (opt) =>
+                                                    opt.value ===
+                                                    values.areaEstudio,
+                                            ) || null
+                                        }
+                                        onChange={(val) =>
+                                            setFieldValue(
+                                                'areaEstudio',
+                                                val?.value,
+                                            )
+                                        }
+                                    />
+                                </FormItem>
+                            </div>
 
-                            <FormItem
-                                className="mb-0"
-                                label="Universidad destino"
-                            >
-                                <Input
-                                    name="universidadDestino"
-                                    value={values.universidadDestino || ''}
-                                    onChange={handleChange}
-                                />
-                            </FormItem>
+                            <div className="md:col-span-2 grid grid-cols-2 gap-4">
+                                <FormItem
+                                    className="mb-0"
+                                    label="Universidad destino"
+                                >
+                                    <Input
+                                        name="universidadDestino"
+                                        value={values.universidadDestino || ''}
+                                        onChange={handleChange}
+                                    />
+                                </FormItem>
 
-                            <FormItem className="mb-0" label="Entidad becaria">
-                                <Input
-                                    name="entidadBecaria"
-                                    value={values.entidadBecaria || ''}
-                                    onChange={handleChange}
-                                />
-                            </FormItem>
-
-                            <FormItem
-                                className="mb-0"
-                                label="Cantidad de cupos"
-                            >
-                                <Input
-                                    type="number"
-                                    name="cantCupos"
-                                    value={values.cantCupos || ''}
-                                    onChange={handleChange}
-                                />
-                            </FormItem>
+                                <FormItem
+                                    className="mb-0"
+                                    label="Entidad becaria"
+                                >
+                                    <Input
+                                        name="entidadBecaria"
+                                        value={values.entidadBecaria || ''}
+                                        onChange={handleChange}
+                                    />
+                                </FormItem>
+                            </div>
                         </div>
 
                         {/* Sección Duración */}
@@ -542,10 +550,10 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                         </div>
 
                         {/* Sección Fechas */}
-                        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormItem
                                 className="mb-0"
-                                label="Fecha de aplicación inicial"
+                                label="Fecha de inscripción inicial"
                             >
                                 <DatePicker
                                     value={
@@ -576,7 +584,7 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
 
                             <FormItem
                                 className="mb-0"
-                                label="Fecha de aplicación final"
+                                label="Fecha de inscripción final"
                             >
                                 <DatePicker
                                     value={
@@ -602,6 +610,19 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                             )
                                         }
                                     }}
+                                />
+                            </FormItem>
+
+                            <FormItem
+                                className="mb-0"
+                                label="Cantidad de cupos"
+                            >
+                                <Input
+                                    type="number"
+                                    name="cantCupos"
+                                    min={0}
+                                    value={values.cantCupos || ''}
+                                    onChange={handleChange}
                                 />
                             </FormItem>
                         </div>
@@ -1219,35 +1240,6 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                             </div>
                         </div>
 
-                        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormItem
-                                className="mb-0"
-                                label="Monto mensual mínimo"
-                            >
-                                <Input
-                                    type="number"
-                                    name="cobertura.montoMensualMin"
-                                    value={
-                                        values.cobertura?.montoMensualMin || ''
-                                    }
-                                    onChange={handleChange}
-                                />
-                            </FormItem>
-                            <FormItem
-                                className="mb-0"
-                                label="Monto mensual máximo"
-                            >
-                                <Input
-                                    type="number"
-                                    name="cobertura.montoMensualMax"
-                                    value={
-                                        values.cobertura?.montoMensualMax || ''
-                                    }
-                                    onChange={handleChange}
-                                />
-                            </FormItem>
-                        </div>
-
                         {/* Sección Información Adicional */}
                         <div>
                             <div className="mt-4">
@@ -1256,8 +1248,11 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                 </h4>
                                 <DividerMain className="mb-3" />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormItem label="Sitio web" className="mb-3">
+                            <div className="grid grid-cols-4 gap-4">
+                                <FormItem
+                                    label="Sitio web"
+                                    className="mb-3 col-span-2"
+                                >
                                     <Input
                                         name="informacionAdicional.sitioWeb"
                                         value={
@@ -1267,22 +1262,6 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                         onChange={handleChange}
                                     />
                                 </FormItem>
-                                <FormItem
-                                    label="Correo de contacto"
-                                    className="mb-3"
-                                >
-                                    <Input
-                                        type="email"
-                                        name="informacionAdicional.correoContacto"
-                                        value={
-                                            values.informacionAdicional
-                                                ?.correoContacto || ''
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormItem>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
                                 <FormItem
                                     label="Dificultad (1-5)"
                                     className="mb-1"
@@ -1296,7 +1275,7 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                         onChange={handleChange}
                                     />
                                 </FormItem>
-                                <div className="flex items-center mt-6">
+                                <div className="flex items-center mt-5">
                                     <Switcher
                                         name="destacada"
                                         checked={values.destacada || false}

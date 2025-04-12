@@ -378,13 +378,6 @@ const BecasList: React.FC = () => {
                         <strong>Alojamiento:</strong>{' '}
                         {beca.cobertura?.alojamiento ? 'Sí' : 'No'}
                     </div>
-                    <div className="detail-item">
-                        <strong>Monto mensual:</strong>{' '}
-                        {beca.cobertura?.montoMensualMin ||
-                        beca.cobertura?.montoMensualMax
-                            ? `${beca.cobertura.montoMensualMin || 0} - ${beca.cobertura.montoMensualMax || 0}`
-                            : 'No especificado'}
-                    </div>
                 </div>
             </div>
 
