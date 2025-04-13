@@ -170,7 +170,9 @@ const BecasList: React.FC = () => {
 
     const formatDate = (dateString?: string) => {
         if (!dateString) return 'No especificado'
-        return new Date(dateString).toLocaleDateString()
+        const date = new Date(dateString)
+        date.setDate(date.getDate() + 1) // Adjusting the date by adding one day
+        return date.toLocaleDateString()
     }
 
     const renderDetails = (beca: Beca) => (

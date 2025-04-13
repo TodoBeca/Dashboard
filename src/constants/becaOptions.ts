@@ -293,6 +293,10 @@ export const areaEstudioOptions = [
     { value: 'Comunicación', label: 'Comunicación' },
     { value: 'Derecho', label: 'Derecho' },
     { value: 'Psicología', label: 'Psicología' },
+    {
+        value: 'Relaciones Internacionales',
+        label: 'Relaciones Internacionales',
+    },
 
     // Ciencia y Tecnología
     { value: 'Física', label: 'Física' },
@@ -300,10 +304,15 @@ export const areaEstudioOptions = [
     { value: 'Biología', label: 'Biología' },
     { value: 'Matemáticas', label: 'Matemáticas' },
     { value: 'Informática', label: 'Informática' },
+    { value: 'Economía y Negocios', label: 'Economía y Negocios' },
     { value: 'Ingeniería', label: 'Ingeniería' },
     { value: 'Tecnología', label: 'Tecnología' },
     { value: 'Astronomía', label: 'Astronomía' },
+    { value: 'Medicina', label: 'Medicina' },
+    { value: 'Salud', label: 'Salud' },
     { value: 'Ciencias Ambientales', label: 'Ciencias Ambientales' },
+    { value: 'Ciencias Políticas', label: 'Ciencias Políticas' },
+    { value: 'Ciencias Sociales', label: 'Ciencias Sociales' },
 
     // Técnicas
     { value: 'Mecánica', label: 'Mecánica' },
