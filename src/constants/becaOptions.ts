@@ -9,6 +9,7 @@ export const tipoBecaOptions = [
 ]
 
 export const nivelAcademicoOptions = [
+    { value: 'Secundario', label: 'Secundario' },
     { value: 'Doctorado', label: 'Doctorado' },
     { value: 'Maestría', label: 'Maestría' },
     { value: 'Grado', label: 'Grado' },
