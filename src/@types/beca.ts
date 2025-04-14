@@ -67,6 +67,7 @@ export interface Beca {
     duracion?: Duracion
     fechaInicioAplicacion?: string
     fechaFinAplicacion?: string
+    fechaInicioPrograma?: string
     tipoBeca: TipoBeca
     requisitos?: Requisitos
     cobertura?: Cobertura

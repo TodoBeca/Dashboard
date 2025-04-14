@@ -348,6 +348,7 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
         },
         fechaInicioAplicacion: beca.fechaInicioAplicacion || '',
         fechaFinAplicacion: beca.fechaFinAplicacion || '',
+        fechaInicioPrograma: beca.fechaInicioPrograma || '',
         requisitos: {
             nivelAcademicoMin:
                 beca.requisitos?.nivelAcademicoMin || 'Doctorado',
@@ -502,7 +503,7 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                         </div>
 
                         {/* Sección Duración */}
-                        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-4">
                             <FormItem className="mb-0" label="Duración mínima">
                                 <Input
                                     type="number"
@@ -547,6 +548,19 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     }
                                 />
                             </FormItem>
+
+                            <FormItem
+                                className="mb-0"
+                                label="Cantidad de cupos"
+                            >
+                                <Input
+                                    type="number"
+                                    name="cantCupos"
+                                    min={0}
+                                    value={values.cantCupos || ''}
+                                    onChange={handleChange}
+                                />
+                            </FormItem>
                         </div>
 
                         {/* Sección Fechas */}
@@ -559,10 +573,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     value={
                                         values.fechaInicioAplicacion
                                             ? new Date(
-                                                  values.fechaInicioAplicacion,
+                                                  values.fechaInicioAplicacion +
+                                                      'T00:00:00',
                                               )
                                             : null
                                     }
+                                    inputFormat="DD/MM/YYYY"
                                     onChange={(date) => {
                                         if (date) {
                                             const formattedDate = date
@@ -590,10 +606,12 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
                                     value={
                                         values.fechaFinAplicacion
                                             ? new Date(
-                                                  values.fechaFinAplicacion,
+                                                  values.fechaFinAplicacion +
+                                                      'T00:00:00',
                                               )
                                             : null
                                     }
+                                    inputFormat="DD/MM/YYYY"
                                     onChange={(date) => {
                                         if (date) {
                                             const formattedDate = date
@@ -615,14 +633,34 @@ const BecaEditForm: React.FC<BecaEditFormProps> = ({
 
                             <FormItem
                                 className="mb-0"
-                                label="Cantidad de cupos"
+                                label="Fecha de inicio del programa"
                             >
-                                <Input
-                                    type="number"
-                                    name="cantCupos"
-                                    min={0}
-                                    value={values.cantCupos || ''}
-                                    onChange={handleChange}
+                                <DatePicker
+                                    value={
+                                        values.fechaInicioPrograma
+                                            ? new Date(
+                                                  values.fechaInicioPrograma +
+                                                      'T00:00:00',
+                                              )
+                                            : null
+                                    }
+                                    inputFormat="DD/MM/YYYY"
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const formattedDate = date
+                                                .toISOString()
+                                                .split('T')[0]
+                                            setFieldValue(
+                                                'fechaInicioPrograma',
+                                                formattedDate,
+                                            )
+                                        } else {
+                                            setFieldValue(
+                                                'fechaInicioPrograma',
+                                                '',
+                                            )
+                                        }
+                                    }}
                                 />
                             </FormItem>
                         </div>

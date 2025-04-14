@@ -263,6 +263,10 @@ const BecasList: React.FC = () => {
                         <strong>Fecha fin aplicación:</strong>{' '}
                         {formatDate(beca.fechaFinAplicacion)}
                     </div>
+                    <div className="detail-item">
+                        <strong>Fecha inicio programa:</strong>{' '}
+                        {formatDate(beca.fechaInicioPrograma)}
+                    </div>
                 </div>
             </div>
 

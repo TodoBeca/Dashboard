@@ -54,6 +54,7 @@ const initialValues: Partial<Beca> = {
     },
     fechaInicioAplicacion: '',
     fechaFinAplicacion: '',
+    fechaInicioPrograma: '',
     requisitos: {
         nivelAcademicoMin: 'Doctorado',
         edadMax: undefined,
@@ -427,7 +428,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                         </div>
 
                         {/* Sección Duración */}
-                        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-4">
                             <FormItem className="mb-0" label="Duración mínima">
                                 <Input
                                     type="number"
@@ -472,6 +473,19 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                     }
                                 />
                             </FormItem>
+
+                            <FormItem
+                                className="mb-0"
+                                label="Cantidad de cupos"
+                            >
+                                <Input
+                                    type="number"
+                                    name="cantCupos"
+                                    min={0}
+                                    value={values.cantCupos || ''}
+                                    onChange={handleChange}
+                                />
+                            </FormItem>
                         </div>
 
                         {/* Sección Fechas */}
@@ -489,6 +503,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                               )
                                             : null
                                     }
+                                    inputFormat="DD/MM/YYYY"
                                     onChange={(date) => {
                                         if (date) {
                                             const year = date.getFullYear()
@@ -526,6 +541,7 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
                                               )
                                             : null
                                     }
+                                    inputFormat="DD/MM/YYYY"
                                     onChange={(date) => {
                                         if (date) {
                                             const year = date.getFullYear()
@@ -552,14 +568,39 @@ const AddBecaForm: React.FC<AddBecaFormProps> = ({
 
                             <FormItem
                                 className="mb-0"
-                                label="Cantidad de cupos"
+                                label="Fecha de inicio del programa"
                             >
-                                <Input
-                                    type="number"
-                                    name="cantCupos"
-                                    min={0}
-                                    value={values.cantCupos || ''}
-                                    onChange={handleChange}
+                                <DatePicker
+                                    value={
+                                        values.fechaInicioPrograma
+                                            ? new Date(
+                                                  values.fechaInicioPrograma +
+                                                      'T00:00:00',
+                                              )
+                                            : null
+                                    }
+                                    inputFormat="DD/MM/YYYY"
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const year = date.getFullYear()
+                                            const month = String(
+                                                date.getMonth() + 1,
+                                            ).padStart(2, '0')
+                                            const day = String(
+                                                date.getDate(),
+                                            ).padStart(2, '0')
+                                            const formattedDate = `${year}-${month}-${day}`
+                                            setFieldValue(
+                                                'fechaInicioPrograma',
+                                                formattedDate,
+                                            )
+                                        } else {
+                                            setFieldValue(
+                                                'fechaInicioPrograma',
+                                                '',
+                                            )
+                                        }
+                                    }}
                                 />
                             </FormItem>
                         </div>
