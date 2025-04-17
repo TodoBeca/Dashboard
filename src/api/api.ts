@@ -246,3 +246,16 @@ export const getUserById = async (id: string): Promise<User> => {
         throw error
     }
 }
+
+//SITEMAP
+export const generarSitemap = async () => {
+    const res = await fetch(`${API_BASE_URL}/auth/generarSitemap`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+
+    const data = await res.json()
+    alert(data.message)
+}

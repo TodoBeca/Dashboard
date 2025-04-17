@@ -16,9 +16,9 @@ import DeleteButton from '../../DeleteButton'
 import BecaDetailsButton from '../Buttons/BecaDetailsButton'
 import EditButton from '../../EditButton'
 import Swal from 'sweetalert2'
-import AddBecasListButton from '../Buttons/AddBecasListButton'
 import DuplicateBecaButton from '../Buttons/DuplicateBecaButton'
-
+import GenerarSitemapButton from '../Buttons/GenerarSitemapButton'
+import { generarSitemap } from '@/api/api'
 type UploadBecasProps = {
     onFileUpload: (data: any[][]) => void
     onClose?: () => void
@@ -72,8 +72,37 @@ const BecasList: React.FC = () => {
         setIsAddingBeca(true)
     }
 
-    const handleAddBecaList = () => {
-        setIsAddingBecaList(true)
+    const handleGenerarSitemap = async () => {
+        try {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción generará un nuevo sitemap para el sitio web.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, generar',
+                cancelButtonText: 'Cancelar',
+            })
+
+            if (result.isConfirmed) {
+                await generarSitemap()
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'El sitemap ha sido generado correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                })
+            }
+        } catch (error) {
+            console.error('Error generating sitemap:', error)
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al generar el sitemap.',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+            })
+        }
     }
 
     const handleAddSuccess = (newBeca: Beca) => {
@@ -447,35 +476,44 @@ const BecasList: React.FC = () => {
                 />
             ) : (
                 <>
-                    <div className="filters-container">
-                        <select
-                            value={selectedTipo}
-                            onChange={(e) => setSelectedTipo(e.target.value)}
-                            className="filter-select"
-                        >
-                            <option value="Mostrar Todos">Mostrar Todos</option>
-                            <option value="Doctorado">Doctorado</option>
-                            <option value="Maestría">Maestría</option>
-                            <option value="Grado">Grado</option>
-                            <option value="Posgrado">Posgrado</option>
-                        </select>
+                    <div className="flex justify-between align-items-center">
+                        <div className="filters-container">
+                            <select
+                                value={selectedTipo}
+                                onChange={(e) =>
+                                    setSelectedTipo(e.target.value)
+                                }
+                                className="filter-select"
+                            >
+                                <option value="Mostrar Todos">
+                                    Mostrar Todos
+                                </option>
+                                <option value="Doctorado">Doctorado</option>
+                                <option value="Maestría">Maestría</option>
+                                <option value="Grado">Grado</option>
+                                <option value="Posgrado">Posgrado</option>
+                            </select>
 
-                        <input
-                            type="text"
-                            placeholder="Buscar becas..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="search-input"
-                        />
+                            <input
+                                type="text"
+                                placeholder="Buscar becas..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="search-input"
+                            />
 
-                        <AddBecaButton
-                            onAddBeca={handleAddBeca}
-                            size="medium"
-                        />
-                        {/* <AddBecasListButton
-                            onAddBecasList={handleAddBecaList}
-                            size="medium"
-                        /> */}
+                            <AddBecaButton
+                                onAddBeca={handleAddBeca}
+                                size="medium"
+                            />
+                        </div>
+                        <div>
+                            {' '}
+                            <GenerarSitemapButton
+                                onClick={handleGenerarSitemap}
+                                size="sm"
+                            />
+                        </div>
                     </div>
 
                     {error ? (
