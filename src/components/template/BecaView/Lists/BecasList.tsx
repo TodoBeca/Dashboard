@@ -17,13 +17,6 @@ import BecaDetailsButton from '../Buttons/BecaDetailsButton'
 import EditButton from '../../EditButton'
 import Swal from 'sweetalert2'
 import DuplicateBecaButton from '../Buttons/DuplicateBecaButton'
-import GenerarSitemapButton from '../Buttons/GenerarSitemapButton'
-import { generarSitemap } from '@/api/api'
-type UploadBecasProps = {
-    onFileUpload: (data: any[][]) => void
-    onClose?: () => void
-    onAddSuccess?: (newBeca: Beca) => void
-}
 
 const BecasList: React.FC = () => {
     const { becas, loading, error, fetchBecas, removeBeca, addBeca } =
@@ -169,6 +162,13 @@ const BecasList: React.FC = () => {
         const date = new Date(dateString)
         date.setDate(date.getDate() + 1) // Adjusting the date by adding one day
         return date.toLocaleDateString()
+    }
+
+    const isBecaExpired = (beca: Beca): boolean => {
+        if (!beca.fechaFinAplicacion) return false
+        const endDate = new Date(beca.fechaFinAplicacion)
+        const today = new Date()
+        return endDate < today
     }
 
     const renderDetails = (beca: Beca) => (
@@ -503,7 +503,13 @@ const BecasList: React.FC = () => {
                             <TBody>
                                 {filteredBecas.map((beca, index) => (
                                     <React.Fragment key={beca._id}>
-                                        <tr>
+                                        <tr
+                                            className={
+                                                isBecaExpired(beca)
+                                                    ? 'expired-beca'
+                                                    : ''
+                                            }
+                                        >
                                             <Td className="text-center">
                                                 {index + 1}
                                             </Td>
@@ -527,37 +533,39 @@ const BecasList: React.FC = () => {
                                                 className="text-center"
                                                 style={{ whiteSpace: 'nowrap' }}
                                             >
-                                                <BecaDetailsButton
-                                                    size="medium"
-                                                    becaInfo={() =>
-                                                        toggleExpandBeca(
-                                                            beca._id,
-                                                        )
-                                                    }
-                                                    className="mr-2"
-                                                />
-                                                <EditButton
-                                                    size="medium"
-                                                    isOpen={() =>
-                                                        setEditingBeca(beca)
-                                                    }
-                                                />
-                                                <DuplicateBecaButton
-                                                    size="medium"
-                                                    onDuplicateBeca={() =>
-                                                        handleDuplicateBeca(
-                                                            beca,
-                                                        )
-                                                    }
-                                                />
-                                                <DeleteButton
-                                                    size="medium"
-                                                    onDelete={() =>
-                                                        handleDeleteBeca(
-                                                            beca._id,
-                                                        )
-                                                    }
-                                                />
+                                                <div className="action-buttons">
+                                                    <BecaDetailsButton
+                                                        size="medium"
+                                                        becaInfo={() =>
+                                                            toggleExpandBeca(
+                                                                beca._id,
+                                                            )
+                                                        }
+                                                        className="mr-2"
+                                                    />
+                                                    <EditButton
+                                                        size="medium"
+                                                        isOpen={() =>
+                                                            setEditingBeca(beca)
+                                                        }
+                                                    />
+                                                    <DuplicateBecaButton
+                                                        size="medium"
+                                                        onDuplicateBeca={() =>
+                                                            handleDuplicateBeca(
+                                                                beca,
+                                                            )
+                                                        }
+                                                    />
+                                                    <DeleteButton
+                                                        size="medium"
+                                                        onDelete={() =>
+                                                            handleDeleteBeca(
+                                                                beca._id,
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
                                             </Td>
                                         </tr>
                                         {expandedBeca === beca._id && (

@@ -80,3 +80,22 @@
     border-radius: 4px;
     margin: 20px 0;
 }
+
+.expired-beca {
+    background-color: #f8f8f8;
+    color: #999;
+}
+
+.expired-beca td {
+    color: #999;
+}
+
+.expired-beca .action-buttons {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.expired-beca .action-buttons button {
+    opacity: 1;
+    pointer-events: auto;
+}
