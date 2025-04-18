@@ -72,39 +72,6 @@ const BecasList: React.FC = () => {
         setIsAddingBeca(true)
     }
 
-    const handleGenerarSitemap = async () => {
-        try {
-            const result = await Swal.fire({
-                title: '¿Estás seguro?',
-                text: 'Esta acción generará un nuevo sitemap para el sitio web.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, generar',
-                cancelButtonText: 'Cancelar',
-            })
-
-            if (result.isConfirmed) {
-                await generarSitemap()
-                Swal.fire({
-                    title: '¡Éxito!',
-                    text: 'El sitemap ha sido generado correctamente.',
-                    icon: 'success',
-                    confirmButtonColor: '#3085d6',
-                })
-            }
-        } catch (error) {
-            console.error('Error generating sitemap:', error)
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al generar el sitemap.',
-                icon: 'error',
-                confirmButtonColor: '#d33',
-            })
-        }
-    }
-
     const handleAddSuccess = (newBeca: Beca) => {
         setIsAddingBeca(false)
         fetchBecas()
@@ -505,13 +472,6 @@ const BecasList: React.FC = () => {
                             <AddBecaButton
                                 onAddBeca={handleAddBeca}
                                 size="medium"
-                            />
-                        </div>
-                        <div>
-                            {' '}
-                            <GenerarSitemapButton
-                                onClick={handleGenerarSitemap}
-                                size="sm"
                             />
                         </div>
                     </div>
