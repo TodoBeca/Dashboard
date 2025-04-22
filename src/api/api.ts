@@ -259,3 +259,122 @@ export const generarSitemap = async () => {
     const data = await res.json()
     alert(data.message)
 }
+
+// AI ASSISTANT
+export const chatWithGPT = async (config: {
+    systemPrompt: string
+    temperature: number
+    maxTokens: number
+    model: string
+    message: string
+}): Promise<any> => {
+    try {
+        // Primero obtenemos todas las becas
+        const becasResponse = await fetch(`${API_BASE_URL}/beca/getBecas`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
+        if (!becasResponse.ok) {
+            throw new Error('Error al obtener las becas')
+        }
+
+        const becasData = await becasResponse.json()
+
+        // Luego enviamos el mensaje con la información de las becas
+        const response = await fetch(`${API_BASE_URL}/chat/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({
+                message: config.message,
+                settings: {
+                    systemPrompt: config.systemPrompt,
+                    temperature: config.temperature,
+                    maxTokens: config.maxTokens,
+                    model: config.model,
+                },
+                becas: becasData, // Incluimos todas las becas en la solicitud
+            }),
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'Error al enviar el mensaje')
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error en chatWithGPT:', error)
+        throw error
+    }
+}
+
+// AI ASSISTANT SETTINGS
+export const updateChatSettings = async (
+    id: string,
+    settings: {
+        systemPrompt: string
+        temperature: number
+        maxTokens: number
+        model: string
+    },
+): Promise<any> => {
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/chat/updateSettings/${id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify(settings),
+            },
+        )
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(
+                errorData.message || 'Error al actualizar la configuración',
+            )
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error en updateChatSettings:', error)
+        throw error
+    }
+}
+
+export const getActiveSettings = async (): Promise<any> => {
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/chat/getActiveSettings/active`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            },
+        )
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(
+                errorData.message || 'Error al obtener la configuración activa',
+            )
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error en getActiveSettings:', error)
+        throw error
+    }
+}

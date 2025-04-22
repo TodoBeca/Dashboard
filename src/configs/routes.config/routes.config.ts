@@ -24,6 +24,12 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/demo/UsuariosView')),
         authority: [],
     },
+    {
+        key: 'asistenteIA',
+        path: '/asistenteIA-view',
+        component: lazy(() => import('@/views/demo/AsistenteIA')),
+        authority: [],
+    },
     // {
     //     key: 'singleMenuItem',
     //     path: '/single-menu-view',

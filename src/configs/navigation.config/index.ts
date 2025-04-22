@@ -37,6 +37,16 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+    {
+        key: 'asistenteIA',
+        path: '/asistenteIA-view',
+        title: 'AsistenteIA',
+        translateKey: 'nav.asistenteIA',
+        icon: 'asistenteIA',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
     // {
     //     key: 'singleMenuItem',
     //     path: '/single-menu-view',
