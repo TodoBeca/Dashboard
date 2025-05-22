@@ -1,5 +1,6 @@
 import { Beca } from '@/@types/beca'
 import { User } from '@/@types/user'
+import { Pais } from '@/@types/pais'
 
 const API_BASE_URL: string = 'https://backend-8vsm.onrender.com'
 
@@ -375,6 +376,102 @@ export const getActiveSettings = async (): Promise<any> => {
         return await response.json()
     } catch (error) {
         console.error('Error en getActiveSettings:', error)
+        throw error
+    }
+}
+
+// PAISES
+export const getPaises = async (): Promise<any> => {
+    const PAISES_ENDPOINT: string = '/pais/getPaises'
+
+    try {
+        const response = await fetch(`${API_BASE_URL}${PAISES_ENDPOINT}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener becas: ${response.status}`)
+        }
+
+        return await response.json()
+    } catch (error) {
+        console.error('Error al obtener becas:', error)
+        throw error
+    }
+}
+
+export const updatePais = async (
+    id: string,
+    updates: Partial<Pais>,
+): Promise<Pais> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/pais/updatePais/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(updates),
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'Error al actualizar la beca')
+        }
+
+        const data = await response.json()
+        return data.updatedBeca
+    } catch (error) {
+        console.error('Error en updateBeca:', error)
+        throw error
+    }
+}
+
+export const createPais = async (paisData: Partial<Pais>): Promise<Pais> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/pais/crearPais`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(paisData),
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.msg || 'Error al crear la beca')
+        }
+
+        const data = await response.json()
+        return data.beca
+    } catch (error) {
+        console.error('Error en createBeca:', error)
+        throw error
+    }
+}
+
+export const deletePais = async (id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/pais/deletePais/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'Error al eliminar la beca')
+        }
+
+        console.log('Beca eliminada exitosamente')
+    } catch (error) {
+        console.error('Error en deleteBeca:', error)
         throw error
     }
 }

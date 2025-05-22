@@ -28,6 +28,16 @@ const navigationConfig: NavigationTree[] = [
         subMenu: [],
     },
     {
+        key: 'paises',
+        path: '/paises-view',
+        title: 'Paises',
+        translateKey: 'nav.paises',
+        icon: 'paises',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
         key: 'usuarios',
         path: '/usuarios-view',
         title: 'Usuarios',
