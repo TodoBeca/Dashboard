@@ -38,10 +38,7 @@ const initialValues: Partial<Pais> = {
     costo_vida_mensual_usd: {
         moneda: '',
         tipo_cambio_usd: '',
-        residencia_universitaria_usd: {
-            min: undefined,
-            max: undefined,
-        },
+        residencia_universitaria_usd: '',
         supermercado_mensual_usd: undefined,
         transporte_publico_usd: undefined,
         seguro_medico_obligatorio: '',
@@ -355,41 +352,24 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
                                     />
                                 </FormItem>
                                 <FormItem
-                                    label="Residencia universitaria mínima (USD)"
+                                    label="Residencia universitaria (USD)"
                                     className="mb-0"
                                 >
                                     <Input
-                                        type="number"
                                         name="costo_vida_mensual_usd.residencia_universitaria_usd.min"
                                         value={
                                             values.costo_vida_mensual_usd
                                                 ?.residencia_universitaria_usd
-                                                ?.min
                                         }
                                         onChange={handleChange}
                                     />
                                 </FormItem>
-                                <FormItem
-                                    label="Residencia universitaria máxima (USD)"
-                                    className="mb-0"
-                                >
-                                    <Input
-                                        type="number"
-                                        name="costo_vida_mensual_usd.residencia_universitaria_usd.max"
-                                        value={
-                                            values.costo_vida_mensual_usd
-                                                ?.residencia_universitaria_usd
-                                                ?.max
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormItem>
+
                                 <FormItem
                                     label="Supermercado mensual (USD)"
                                     className="mb-0"
                                 >
                                     <Input
-                                        type="number"
                                         name="costo_vida_mensual_usd.supermercado_mensual_usd"
                                         value={
                                             values.costo_vida_mensual_usd
@@ -403,7 +383,6 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
                                     className="mb-0"
                                 >
                                     <Input
-                                        type="number"
                                         name="costo_vida_mensual_usd.transporte_publico_usd"
                                         value={
                                             values.costo_vida_mensual_usd

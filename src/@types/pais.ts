@@ -10,12 +10,9 @@ export type Pais = {
     costo_vida_mensual_usd?: {
         moneda?: string
         tipo_cambio_usd?: string
-        residencia_universitaria_usd?: {
-            min?: number
-            max?: number
-        }
-        supermercado_mensual_usd?: number
-        transporte_publico_usd?: number
+        residencia_universitaria_usd?: string
+        supermercado_mensual_usd?: string
+        transporte_publico_usd?: string
         seguro_medico_obligatorio?: string
     }
     sistema_educacion?: {
@@ -25,7 +22,7 @@ export type Pais = {
     }
     universidades_mejor_rankeadas?: string[]
     comunidad_estudiantil_internacional?: {
-        porcentaje_estudiantes_internacionales?: number
+        porcentaje_estudiantes_internacionales?: string
     }
     visa_y_requisitos_migratorios?: {
         tipo_visa_estudiante?: string
