@@ -513,7 +513,6 @@ const AddPaisForm: React.FC<AddPaisFormProps> = ({
                                     className="mb-0"
                                 >
                                     <Input
-                                        type="number"
                                         name="comunidad_estudiantil_internacional.porcentaje_estudiantes_internacionales"
                                         value={
                                             values
