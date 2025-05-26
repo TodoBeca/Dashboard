@@ -9,7 +9,12 @@ import DividerMain from '../../DividerMain'
 import { NAV_MODE_THEMED } from '@/constants/theme.constant'
 import classNames from 'classnames'
 import { useAppSelector } from '@/store'
-import { countryOptions, regionCountries } from '@/constants/paisOptions'
+import {
+    countryOptions,
+    regionCountries,
+    idiomaOptions,
+    rankingOptions,
+} from '@/constants/paisOptions'
 
 type CountryOption = {
     value: string
@@ -65,29 +70,6 @@ const initialValues: Partial<Pais> = {
     },
 }
 
-const idiomaOptions = [
-    { value: 'Español', label: 'Español' },
-    { value: 'Inglés', label: 'Inglés' },
-    { value: 'Francés', label: 'Francés' },
-    { value: 'Alemán', label: 'Alemán' },
-    { value: 'Italiano', label: 'Italiano' },
-    { value: 'Portugués', label: 'Portugués' },
-    { value: 'Chino', label: 'Chino' },
-    { value: 'Japonés', label: 'Japonés' },
-    { value: 'Coreano', label: 'Coreano' },
-    { value: 'Ruso', label: 'Ruso' },
-]
-
-const regionOptions = [
-    { value: 'América Latina', label: 'América Latina' },
-    { value: 'Centroamérica', label: 'Centroamérica' },
-    { value: 'América del Norte', label: 'América del Norte' },
-    { value: 'Europa', label: 'Europa' },
-    { value: 'Asia', label: 'Asia' },
-    { value: 'Oceanía', label: 'Oceanía' },
-    { value: 'África', label: 'África' },
-]
-
 const EditPaisForm: React.FC<EditPaisFormProps> = ({
     pais,
     onEditSuccess,
@@ -101,13 +83,22 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
         pais.ficha_general_pais?.idiomas_oficiales || [],
     )
-    const [selectedUniversities, setSelectedUniversities] = useState<string[]>(
-        pais.universidades_mejor_rankeadas || [],
-    )
+    const [rankedUniversities, setRankedUniversities] = useState<
+        Array<{
+            nombreRanking: string
+            universidades: Array<{
+                nombre: string
+                posicion: number
+                _id?: string
+            }>
+        }>
+    >(pais.universidades_mejor_rankeadas || [])
     const [selectedDocuments, setSelectedDocuments] = useState<string[]>(
         pais.visa_y_requisitos_migratorios?.documentacion_necesaria || [],
     )
     const [tempUniversity, setTempUniversity] = useState('')
+    const [tempPosition, setTempPosition] = useState('')
+    const [selectedRanking, setSelectedRanking] = useState('')
     const [tempDocument, setTempDocument] = useState('')
 
     const handleCountryChange = (
@@ -146,7 +137,7 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
             }
 
             values.ficha_general_pais.idiomas_oficiales = selectedLanguages
-            values.universidades_mejor_rankeadas = selectedUniversities
+            values.universidades_mejor_rankeadas = rankedUniversities
             values.visa_y_requisitos_migratorios.documentacion_necesaria =
                 selectedDocuments
 
@@ -183,20 +174,91 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
 
     const handleUniversityAdd = () => {
         if (
-            tempUniversity.trim() &&
-            !selectedUniversities.includes(tempUniversity.trim())
+            !tempUniversity.trim() ||
+            !tempPosition.trim() ||
+            !selectedRanking
         ) {
-            setSelectedUniversities([
-                ...selectedUniversities,
-                tempUniversity.trim(),
-            ])
-            setTempUniversity('')
+            return
         }
+
+        const position = parseInt(tempPosition)
+        if (isNaN(position)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'La posición debe ser un número válido',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+            })
+            return
+        }
+
+        const newUniversity = {
+            nombre: tempUniversity.trim(),
+            posicion: position,
+        }
+
+        // Verificar duplicados antes de actualizar el estado
+        const rankingIndex = rankedUniversities.findIndex(
+            (r) => r.nombreRanking === selectedRanking,
+        )
+
+        if (rankingIndex !== -1) {
+            const ranking = rankedUniversities[rankingIndex]
+            const universityExists = ranking.universidades.some(
+                (u) =>
+                    u.nombre.toLowerCase() ===
+                    newUniversity.nombre.toLowerCase(),
+            )
+
+            if (universityExists) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Esta universidad ya existe en el ranking seleccionado',
+                    icon: 'error',
+                    confirmButtonColor: '#d33',
+                })
+                return
+            }
+        }
+
+        // Crear una copia del estado actual
+        const updatedRankings = [...rankedUniversities]
+
+        if (rankingIndex === -1) {
+            // Si el ranking no existe, crear uno nuevo
+            updatedRankings.push({
+                nombreRanking: selectedRanking,
+                universidades: [newUniversity],
+            })
+        } else {
+            // Si el ranking existe, agregar la universidad
+            updatedRankings[rankingIndex].universidades.push(newUniversity)
+        }
+
+        // Actualizar el estado una sola vez
+        setRankedUniversities(updatedRankings)
+        setTempUniversity('')
+        setTempPosition('')
     }
 
-    const handleUniversityRemove = (university: string) => {
-        setSelectedUniversities(
-            selectedUniversities.filter((u) => u !== university),
+    const handleUniversityRemove = (
+        rankingName: string,
+        universityName: string,
+    ) => {
+        setRankedUniversities((prev) =>
+            prev
+                .map((ranking) => {
+                    if (ranking.nombreRanking === rankingName) {
+                        return {
+                            ...ranking,
+                            universidades: ranking.universidades.filter(
+                                (u) => u.nombre !== universityName,
+                            ),
+                        }
+                    }
+                    return ranking
+                })
+                .filter((ranking) => ranking.universidades.length > 0),
         )
     }
 
@@ -449,8 +511,23 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
                                 Universidades Mejor Rankeadas
                             </h4>
                             <DividerMain className="mb-3" />
-                            <div className="grid grid-cols-3 gap-4 mb-4">
-                                <div className="col-span-2">
+                            <div className="grid grid-cols-1 gap-4 mb-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <FormItem label="Ranking" className="mb-0">
+                                        <Select
+                                            options={rankingOptions}
+                                            value={rankingOptions.find(
+                                                (opt) =>
+                                                    opt.value ===
+                                                    selectedRanking,
+                                            )}
+                                            onChange={(val) =>
+                                                setSelectedRanking(
+                                                    val?.value || '',
+                                                )
+                                            }
+                                        />
+                                    </FormItem>
                                     <FormItem
                                         label="Universidad"
                                         className="mb-0"
@@ -470,8 +547,23 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
                                             }}
                                         />
                                     </FormItem>
+                                    <FormItem label="Posición" className="mb-0">
+                                        <Input
+                                            type="number"
+                                            value={tempPosition}
+                                            onChange={(e) =>
+                                                setTempPosition(e.target.value)
+                                            }
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault()
+                                                    handleUniversityAdd()
+                                                }
+                                            }}
+                                        />
+                                    </FormItem>
                                 </div>
-                                <div className="flex items-end mb-1">
+                                <div className="flex justify-end">
                                     <Button
                                         type="button"
                                         variant="solid"
@@ -482,25 +574,49 @@ const EditPaisForm: React.FC<EditPaisFormProps> = ({
                                     </Button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap mt-2">
-                                {selectedUniversities.map(
-                                    (university, index) => (
+                            <div className="space-y-4">
+                                {rankedUniversities.map(
+                                    (ranking, rankingIndex) => (
                                         <div
-                                            key={index}
-                                            className="flex items-center bg-gray-200 rounded-full px-2 py-1 mr-2 mb-2"
+                                            key={rankingIndex}
+                                            className="bg-gray-50 p-4 rounded-lg"
                                         >
-                                            <span>{university}</span>
-                                            <button
-                                                type="button"
-                                                className="ml-2 text-red-500"
-                                                onClick={() =>
-                                                    handleUniversityRemove(
-                                                        university,
-                                                    )
-                                                }
-                                            >
-                                                x
-                                            </button>
+                                            <h5 className="font-medium mb-2">
+                                                {ranking.nombreRanking}
+                                            </h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {ranking.universidades.map(
+                                                    (university, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-center bg-white rounded-full px-3 py-1 border"
+                                                        >
+                                                            <span>
+                                                                {
+                                                                    university.nombre
+                                                                }{' '}
+                                                                (#
+                                                                {
+                                                                    university.posicion
+                                                                }
+                                                                )
+                                                            </span>
+                                                            <button
+                                                                type="button"
+                                                                className="ml-2 text-red-500"
+                                                                onClick={() =>
+                                                                    handleUniversityRemove(
+                                                                        ranking.nombreRanking,
+                                                                        university.nombre,
+                                                                    )
+                                                                }
+                                                            >
+                                                                x
+                                                            </button>
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
                                     ),
                                 )}

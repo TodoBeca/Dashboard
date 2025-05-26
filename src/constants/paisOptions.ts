@@ -344,3 +344,14 @@ export const idiomaOptions = [
     { value: 'Tamil', label: 'Tamil' },
     { value: 'Persa', label: 'Persa (Farsi)' },
 ].sort((a, b) => a.label.localeCompare(b.label, 'es'))
+
+export const rankingOptions = [
+    {
+        value: 'QS World University Rankings',
+        label: 'QS World University Rankings',
+    },
+    {
+        value: 'Times Higher Education World University Rankings',
+        label: 'Times Higher Education World University Rankings',
+    },
+]

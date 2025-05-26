@@ -20,7 +20,14 @@ export type Pais = {
         idiomas_instruccion: string[]
         calendario_academico?: string
     }
-    universidades_mejor_rankeadas?: string[]
+    universidades_mejor_rankeadas?: Array<{
+        nombreRanking: string
+        universidades: Array<{
+            nombre: string
+            posicion: number
+            _id?: string
+        }>
+    }>
     comunidad_estudiantil_internacional?: {
         porcentaje_estudiantes_internacionales?: string
     }
