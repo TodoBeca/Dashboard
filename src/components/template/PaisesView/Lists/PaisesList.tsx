@@ -160,7 +160,7 @@ const PaisesList: React.FC = () => {
                             <strong>Residencia universitaria (USD):</strong>{' '}
                             {pais.costo_vida_mensual_usd
                                 .residencia_universitaria_usd
-                                ? `${pais.costo_vida_mensual_usd.residencia_universitaria_usd.min || '?'} - ${pais.costo_vida_mensual_usd.residencia_universitaria_usd.max || '?'}`
+                                ? `${pais.costo_vida_mensual_usd.residencia_universitaria_usd || '?'}`
                                 : 'No especificado'}
                         </div>
                         <div className="detail-item">
@@ -214,13 +214,30 @@ const PaisesList: React.FC = () => {
                         <h5 className="font-medium mb-2">
                             Universidades Mejor Rankeadas
                         </h5>
-                        <ul className="list-disc pl-5">
+                        <div className="space-y-4">
                             {pais.universidades_mejor_rankeadas.map(
-                                (universidad, index) => (
-                                    <li key={index}>{universidad}</li>
+                                (ranking, rankingIndex) => (
+                                    <div
+                                        key={rankingIndex}
+                                        className="bg-gray-50 p-3 rounded-lg"
+                                    >
+                                        <h6 className="font-medium mb-2">
+                                            {ranking.nombreRanking}
+                                        </h6>
+                                        <ul className="list-disc pl-5">
+                                            {ranking.universidades.map(
+                                                (universidad, index) => (
+                                                    <li key={index}>
+                                                        {universidad.nombre} (#
+                                                        {universidad.posicion})
+                                                    </li>
+                                                ),
+                                            )}
+                                        </ul>
+                                    </div>
                                 ),
                             )}
-                        </ul>
+                        </div>
                     </div>
                 )}
 
